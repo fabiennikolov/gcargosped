@@ -1,524 +1,504 @@
-<title>Глобал Карго Спед — Транспорт и логистика без граници</title>
+<title>Глобал Карго Спед — Вашия товар е наша грижа</title>
 <style>
-/* ============ TOKENS ============ */
+/* ============================ TOKENS (light · his brand orange #FF9131) ============================ */
 :root{
-  --ink:#101A2B;          /* near-black asphalt */
-  --ink-soft:#1E2C41;
-  --brand:#0B5FD6;        /* azure */
-  --brand-600:#0A54BE;
-  --brand-050:#E9F1FD;
-  --amber:#FF7A00;        /* cargo signage */
-  --amber-050:#FFF1E4;
-  --sky:#EEF4FB;          /* cool ground */
-  --sky-2:#F7FAFE;
-  --surface:#FFFFFF;
-  --line:#DCE6F2;         /* cool border */
-  --slate:#566274;        /* secondary text */
-  --slate-2:#7E8A9B;
-  --ok:#1BA672;
-  --shadow: 18px 30px 60px -30px rgba(16,26,43,.28);
-  --shadow-sm: 0 8px 24px -16px rgba(16,26,43,.35);
-  --radius:18px;
-  --radius-sm:12px;
-  --maxw:1160px;
+  --ink:#14181F;
+  --ink-2:#2C333F;
+  --brand:#FF9131;        /* фирменото оранжево */
+  --brand-2:#F26A0F;
+  --brand-3:#D95A00;
+  --brand-050:#FFF1E4;
+  --charcoal:#171B23;     /* тъмни акцентни секции (черно+оранжево бранд) */
+  --charcoal-2:#20252F;
+  --paper:#ffffff;
+  --slate:#5C6675;
+  --slate-2:#8A94A3;
+  --line:rgba(20,24,31,.10);
+  --line-2:rgba(20,24,31,.06);
+
+  --glass:rgba(255,255,255,.60);
+  --glass-strong:rgba(255,255,255,.80);
+  --glass-soft:rgba(255,255,255,.42);
+  --glass-brd:rgba(255,255,255,.72);
+  --blur:saturate(1.5) blur(18px);
+
+  --shadow:0 24px 60px -28px rgba(60,34,8,.40);
+  --shadow-sm:0 12px 30px -18px rgba(60,34,8,.34);
+  --ring:0 0 0 4px rgba(255,145,49,.22);
+
+  --radius:22px;
+  --radius-sm:14px;
+  --maxw:1180px;
   --ease:cubic-bezier(.22,.61,.36,1);
-  --fs-display: clamp(2.4rem, 1.2rem + 4.6vw, 4.4rem);
-  --fs-h2: clamp(1.7rem, 1.1rem + 2.2vw, 2.7rem);
-  --fs-h3: clamp(1.15rem, .95rem + .7vw, 1.4rem);
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
-@media (prefers-color-scheme: dark){
-  :root{
-    --ink:#F2F6FC; --ink-soft:#D7E1F0;
-    --brand:#5B9BFF; --brand-600:#4C8AF0; --brand-050:#152438;
-    --amber:#FF9A3D; --amber-050:#2A1E10;
-    --sky:#0C1420; --sky-2:#111C2C; --surface:#131F30;
-    --line:#233348; --slate:#9FB0C6; --slate-2:#7A8AA0;
-    --shadow: 20px 34px 70px -34px rgba(0,0,0,.7);
-    --shadow-sm: 0 10px 30px -18px rgba(0,0,0,.7);
-  }
-}
-:root[data-theme="light"]{
-  --ink:#101A2B; --ink-soft:#1E2C41; --brand:#0B5FD6; --brand-600:#0A54BE; --brand-050:#E9F1FD;
-  --amber:#FF7A00; --amber-050:#FFF1E4; --sky:#EEF4FB; --sky-2:#F7FAFE; --surface:#FFFFFF;
-  --line:#DCE6F2; --slate:#566274; --slate-2:#7E8A9B;
-  --shadow:18px 30px 60px -30px rgba(16,26,43,.28); --shadow-sm:0 8px 24px -16px rgba(16,26,43,.35);
-}
-:root[data-theme="dark"]{
-  --ink:#F2F6FC; --ink-soft:#D7E1F0; --brand:#5B9BFF; --brand-600:#4C8AF0; --brand-050:#152438;
-  --amber:#FF9A3D; --amber-050:#2A1E10; --sky:#0C1420; --sky-2:#111C2C; --surface:#131F30;
-  --line:#233348; --slate:#9FB0C6; --slate-2:#7A8AA0;
-  --shadow:20px 34px 70px -34px rgba(0,0,0,.7); --shadow-sm:0 10px 30px -18px rgba(0,0,0,.7);
+
+  --fs-display:clamp(2.35rem,1.1rem+4.9vw,4.5rem);
+  --fs-h2:clamp(1.75rem,1.05rem+2.5vw,2.85rem);
+  --fs-h3:clamp(1.15rem,.95rem+.7vw,1.42rem);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif;
 }
 
-/* ============ BASE ============ */
+/* ============================ BASE ============================ */
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0; font-family:var(--sans); color:var(--ink); background:var(--sky);
-  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-  line-height:1.6; font-size:17px; overflow-x:hidden;
+  margin:0; font-family:var(--sans); color:var(--ink); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:hidden;
+  background:#F5F1EC; position:relative;
 }
+/* светъл, топъл gradient-mesh фон (оранжеви акценти) */
+.bg-mesh{position:fixed; inset:0; z-index:-2; overflow:hidden; background:
+  radial-gradient(56% 46% at 84% 6%, rgba(255,145,49,.30), transparent 60%),
+  radial-gradient(46% 40% at 10% 4%, rgba(255,176,103,.26), transparent 60%),
+  radial-gradient(52% 46% at 90% 92%, rgba(242,106,15,.16), transparent 60%),
+  radial-gradient(44% 40% at 4% 94%, rgba(255,145,49,.14), transparent 60%),
+  linear-gradient(180deg,#FFF7EF 0%, #FAFBFD 46%, #F6F8FB 100%);}
+.bg-orb{position:fixed; z-index:-1; border-radius:50%; filter:blur(60px); opacity:.5; pointer-events:none}
+.bg-orb.o1{width:460px;height:460px; background:radial-gradient(circle,var(--brand),transparent 66%); top:-120px; left:-80px; animation:float1 18s var(--ease) infinite}
+.bg-orb.o2{width:420px;height:420px; background:radial-gradient(circle,var(--brand-2),transparent 66%); bottom:-140px; right:-90px; opacity:.3; animation:float2 22s var(--ease) infinite}
+.bg-grain{position:fixed; inset:0; z-index:-1; opacity:.045; pointer-events:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+@keyframes float1{50%{transform:translate(40px,30px) scale(1.08)}}
+@keyframes float2{50%{transform:translate(-40px,-24px) scale(1.1)}}
+
 img,svg{max-width:100%; display:block}
 a{color:inherit; text-decoration:none}
 button{font-family:inherit}
-h1,h2,h3,h4{margin:0; line-height:1.08; text-wrap:balance; letter-spacing:-.02em; font-weight:800}
+h1,h2,h3,h4{margin:0; line-height:1.08; text-wrap:balance; letter-spacing:-.022em; font-weight:800}
 p{margin:0}
 .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
-.eyebrow{
-  font-size:.76rem; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--brand); display:inline-flex; align-items:center; gap:.55em;
-}
-.eyebrow::before{content:""; width:26px; height:2px; background:var(--amber); border-radius:2px}
+.eyebrow{font-size:.75rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--brand-2); display:inline-flex; align-items:center; gap:.6em}
+.eyebrow::before{content:""; width:26px; height:2px; background:var(--brand); border-radius:2px}
 .muted{color:var(--slate)}
 .tnum{font-variant-numeric:tabular-nums}
 
-/* ============ BUTTONS ============ */
-.btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:.55em;
-  border:1px solid transparent; border-radius:999px; padding:.82em 1.5em;
-  font-weight:700; font-size:.98rem; cursor:pointer; transition:transform .2s var(--ease), box-shadow .25s var(--ease), background .2s, color .2s, border-color .2s;
-  white-space:nowrap;
-}
-.btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--brand); color:#fff; box-shadow:0 12px 26px -14px var(--brand)}
-.btn-primary:hover{background:var(--brand-600); transform:translateY(-2px); box-shadow:0 18px 34px -14px var(--brand)}
-.btn-amber{background:var(--amber); color:#3a1c00; box-shadow:0 12px 26px -14px var(--amber)}
-:root[data-theme="dark"] .btn-amber,@media (prefers-color-scheme:dark){}
-.btn-amber:hover{transform:translateY(-2px); filter:brightness(1.03)}
-.btn-ghost{background:transparent; color:var(--ink); border-color:var(--line)}
-.btn-ghost:hover{border-color:var(--brand); color:var(--brand)}
-.btn-lg{padding:1em 1.9em; font-size:1.04rem}
-.btn svg{width:18px;height:18px}
+.glass{background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glass-brd); box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.55); border-radius:var(--radius)}
 
-/* ============ HEADER ============ */
-header{
-  position:sticky; top:0; z-index:60;
-  background:color-mix(in srgb, var(--sky) 82%, transparent);
-  backdrop-filter:saturate(1.4) blur(14px);
-  border-bottom:1px solid transparent; transition:border-color .3s, background .3s;
-}
-header.scrolled{border-bottom-color:var(--line); background:color-mix(in srgb, var(--surface) 88%, transparent)}
-.nav{display:flex; align-items:center; gap:20px; height:74px}
-.brand{display:flex; align-items:center; gap:.65rem; font-weight:800; letter-spacing:-.02em; font-size:1.12rem; cursor:pointer}
-.logo{
-  width:40px; height:40px; border-radius:11px; flex:0 0 auto; position:relative;
-  background:linear-gradient(135deg,var(--brand),var(--brand-600));
-  display:grid; place-items:center; box-shadow:0 10px 22px -12px var(--brand);
-}
-.logo svg{width:22px;height:22px}
-.logo::after{content:""; position:absolute; right:-3px; bottom:-3px; width:14px;height:14px;border-radius:5px;background:var(--amber); border:2.5px solid var(--sky)}
-.brand small{display:block; font-size:.66rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--slate)}
-.navlinks{display:flex; gap:4px; margin-left:12px}
-.navlinks a{
-  padding:.55em .9em; border-radius:999px; font-weight:600; font-size:.96rem; color:var(--slate);
-  transition:color .2s, background .2s; position:relative; cursor:pointer;
-}
-.navlinks a:hover{color:var(--ink)}
-.navlinks a.active{color:var(--brand); background:var(--brand-050)}
+/* ============================ BUTTONS ============================ */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:.55em; border:1px solid transparent;
+  border-radius:999px; padding:.82em 1.5em; font-weight:700; font-size:.98rem; cursor:pointer; white-space:nowrap;
+  transition:transform .2s var(--ease), box-shadow .25s var(--ease), background .2s, color .2s, border-color .2s}
+.btn:active{transform:translateY(1px)}
+.btn svg{width:18px;height:18px}
+.btn-accent{background:linear-gradient(135deg,var(--brand),var(--brand-2)); color:#fff; box-shadow:0 14px 28px -12px rgba(242,106,15,.7)}
+.btn-accent:hover{transform:translateY(-2px); box-shadow:0 20px 36px -12px rgba(242,106,15,.8)}
+.btn-dark{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal)); color:#fff; box-shadow:0 14px 28px -16px rgba(20,24,31,.7)}
+.btn-dark:hover{transform:translateY(-2px); box-shadow:0 20px 38px -16px rgba(20,24,31,.8)}
+.btn-glass{background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  color:var(--ink); border-color:var(--glass-brd); box-shadow:var(--shadow-sm)}
+.btn-glass:hover{color:var(--brand-2); transform:translateY(-2px); border-color:rgba(255,145,49,.5)}
+.btn-lg{padding:1em 1.9em; font-size:1.04rem}
+
+/* ============================ HEADER ============================ */
+header{position:sticky; top:0; z-index:60; padding:12px 0}
+.navbar{display:flex; align-items:center; gap:18px; height:62px; padding:0 14px 0 18px; border-radius:18px;
+  background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glass-brd); box-shadow:var(--shadow-sm)}
+.brand{display:flex; align-items:center; gap:.7rem; font-weight:800; letter-spacing:-.02em; font-size:1.08rem; cursor:pointer}
+.logo{width:42px;height:42px;border-radius:12px; flex:0 0 auto; position:relative; display:grid; place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--brand-3)); box-shadow:0 10px 20px -10px var(--brand-2)}
+.logo svg{width:23px;height:23px}
+.logo::after{content:""; position:absolute; right:-3px; bottom:-3px; width:14px;height:14px;border-radius:5px; background:var(--charcoal); border:2.5px solid #fff}
+.brand small{display:block; font-size:.64rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--slate)}
+.navlinks{display:flex; gap:2px; margin-left:8px}
+.navlinks a{padding:.55em .85em; border-radius:999px; font-weight:600; font-size:.95rem; color:var(--ink-2); cursor:pointer; transition:.2s}
+.navlinks a:hover{color:var(--brand-2); background:rgba(255,145,49,.1)}
+.navlinks a.active{color:var(--brand-2); background:rgba(255,145,49,.14)}
 .nav-cta{margin-left:auto; display:flex; align-items:center; gap:10px}
-.callbtn{display:inline-flex; align-items:center; gap:.5em; font-weight:700; color:var(--ink); padding:.6em .5em; border-radius:12px}
-.callbtn small{display:block; font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--slate); font-weight:600}
-.callbtn .ic{width:34px;height:34px;border-radius:10px;background:var(--amber-050); color:var(--amber); display:grid;place-items:center; flex:0 0 auto}
+.callbtn{display:inline-flex; align-items:center; gap:.55em; font-weight:700; color:var(--ink); padding:.4em .5em; border-radius:12px}
+.callbtn small{display:block; font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--slate); font-weight:700}
+.callbtn .ic{width:36px;height:36px;border-radius:11px; flex:0 0 auto; display:grid; place-items:center; color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 8px 16px -8px rgba(242,106,15,.8)}
 .callbtn .ic svg{width:17px;height:17px}
-.burger{display:none; margin-left:auto; width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer; align-items:center;justify-content:center}
+.burger{display:none; width:44px;height:44px;border-radius:12px; align-items:center; justify-content:center; cursor:pointer;
+  background:var(--glass-strong); border:1px solid var(--glass-brd)}
 .burger svg{width:22px;height:22px}
 
-/* ============ VIEWS ============ */
-.view{display:none; animation:fade .5s var(--ease)}
+.mobile-menu{position:fixed; inset:0 0 0 auto; width:min(86%,340px); z-index:80; transform:translateX(105%);
+  transition:transform .38s var(--ease); padding:22px; display:flex; flex-direction:column; gap:8px;
+  background:var(--glass-strong); backdrop-filter:blur(24px) saturate(1.5); -webkit-backdrop-filter:blur(24px) saturate(1.5);
+  border-left:1px solid var(--glass-brd); box-shadow:-30px 0 60px -30px rgba(60,34,8,.5)}
+.mobile-menu.open{transform:none}
+.mobile-menu .mhead{display:flex; justify-content:flex-end; margin-bottom:6px}
+.mobile-menu .mclose{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;display:grid;place-items:center}
+.mobile-menu a{padding:.85em 1em; border-radius:14px; font-weight:700; font-size:1.06rem; color:var(--ink); border:1px solid var(--line)}
+.mobile-menu a.active{color:var(--brand-2); border-color:rgba(255,145,49,.5); background:rgba(255,145,49,.1)}
+.mobile-menu .btn{margin-top:8px}
+.scrim{position:fixed; inset:0; background:rgba(20,24,31,.4); z-index:75; opacity:0; visibility:hidden; transition:.3s}
+.scrim.show{opacity:1; visibility:visible}
+
+/* ============================ VIEWS ============================ */
+.view{display:none; animation:fade .55s var(--ease)}
 .view.active{display:block}
-@keyframes fade{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
-section{padding:clamp(56px,7vw,104px) 0}
-.section-head{max-width:640px; margin-bottom:48px}
-.section-head h2{font-size:var(--fs-h2); margin:.5rem 0 .7rem}
+@keyframes fade{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+section{padding:clamp(54px,7vw,100px) 0}
+.section-head{max-width:660px; margin-bottom:46px}
+.section-head h2{font-size:var(--fs-h2); margin:.55rem 0 .7rem}
 .section-head p{color:var(--slate); font-size:1.06rem}
-.center{margin-left:auto;margin-right:auto; text-align:center}
+.center{margin-left:auto; margin-right:auto; text-align:center}
 .center .eyebrow{justify-content:center}
 
-/* ============ HERO ============ */
-.hero{position:relative; padding:clamp(40px,5vw,72px) 0 clamp(56px,7vw,96px); overflow:hidden}
-.hero-bg{position:absolute; inset:0; z-index:0; overflow:hidden}
-.blob{position:absolute; border-radius:50%; filter:blur(56px); opacity:.5}
-.blob.b1{width:520px;height:520px; background:radial-gradient(circle,var(--brand),transparent 65%); top:-160px; right:-120px}
-.blob.b2{width:440px;height:440px; background:radial-gradient(circle,var(--amber),transparent 65%); bottom:-200px; left:-140px; opacity:.35}
-.hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:1.15fr .85fr; gap:52px; align-items:center}
-.hero h1{font-size:var(--fs-display); letter-spacing:-.03em; margin:.7rem 0 1.1rem}
-.hero h1 .hl{color:var(--brand); position:relative; white-space:nowrap}
-.hero h1 .hl::after{content:""; position:absolute; left:0; right:0; bottom:.06em; height:.34em; background:var(--amber); opacity:.28; border-radius:6px; z-index:-1}
-.hero .lead{font-size:1.14rem; color:var(--slate); max-width:33ch; margin-bottom:1.6rem}
-.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:1.7rem}
-.hero-trust{display:flex; gap:26px; flex-wrap:wrap; align-items:center; color:var(--slate); font-size:.9rem; font-weight:600}
-.hero-trust b{color:var(--ink); font-size:1.5rem; font-weight:800; display:block; letter-spacing:-.02em}
+/* ============================ HERO ============================ */
+.hero{padding:clamp(30px,4vw,56px) 0 clamp(46px,6vw,84px)}
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:center}
+.hero-badge{display:inline-flex; align-items:center; gap:.5em; padding:.42em .9em; border-radius:999px; font-size:.8rem; font-weight:700;
+  background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); color:var(--ink-2); box-shadow:var(--shadow-sm)}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%; background:#1BB673; box-shadow:0 0 0 4px rgba(27,182,115,.2)}
+.hero h1{font-size:var(--fs-display); letter-spacing:-.035em; margin:1rem 0 1.1rem}
+.hero h1 .hl{background:linear-gradient(120deg,var(--brand-2),var(--brand)); -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero .lead{font-size:1.14rem; color:var(--slate); max-width:37ch; margin-bottom:1.7rem}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:1.9rem}
+.hero-trust{display:flex; gap:14px; flex-wrap:wrap}
+.hero-trust .chip{display:inline-flex; align-items:center; gap:.5em; padding:.5em .9em; border-radius:12px; font-size:.86rem; font-weight:700; color:var(--ink-2);
+  background:var(--glass-soft); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid rgba(255,255,255,.6)}
+.hero-trust .chip svg{width:16px;height:16px; color:var(--brand-2)}
 
-/* route map graphic */
-.routecard{position:relative; z-index:1}
-.routecard .card{
-  background:var(--surface); border:1px solid var(--line); border-radius:24px; padding:22px; box-shadow:var(--shadow);
-}
-.map-mini{position:relative; border-radius:16px; overflow:hidden; background:linear-gradient(160deg,var(--sky-2),var(--brand-050)); aspect-ratio:4/3.1}
-.map-mini svg{position:absolute; inset:0; width:100%; height:100%}
-.route-path{stroke:var(--brand); stroke-width:2.4; fill:none; stroke-dasharray:7 7; stroke-linecap:round;
-  animation:dash 22s linear infinite}
-@keyframes dash{to{stroke-dashoffset:-560}}
-.route-dot{fill:var(--amber)}
-.pin{position:absolute; transform:translate(-50%,-100%); display:flex; flex-direction:column; align-items:center; gap:3px}
-.pin .lbl{background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.15em .6em; font-size:.7rem; font-weight:700; box-shadow:var(--shadow-sm); white-space:nowrap}
-.pin .dot{width:12px;height:12px;border-radius:50%; background:var(--brand); border:3px solid var(--surface); box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 30%,transparent)}
-.truck-run{position:absolute; top:0; left:0; width:34px;height:34px; z-index:3; offset-path: path("M 40 210 C 120 60, 250 260, 360 90"); animation:truck 22s linear infinite}
-.truck-run .badge{width:34px;height:34px;border-radius:11px; background:var(--amber); color:#3a1c00; display:grid;place-items:center; box-shadow:var(--shadow-sm)}
-.truck-run svg{width:19px;height:19px}
+.hero-visual{position:relative}
+.hero-card{padding:20px}
+.scene{position:relative; border-radius:16px; overflow:hidden; aspect-ratio:4/3.05; background:linear-gradient(160deg,#FFF3E8,#FFE6D2 55%,#FFF7EF)}
+.scene svg{position:absolute; inset:0; width:100%; height:100%}
+.scene .rp{stroke:var(--brand-2); stroke-width:2.6; fill:none; stroke-dasharray:8 8; stroke-linecap:round; animation:dash 24s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-620}}
+.truck-run{position:absolute; top:0; left:0; z-index:3; offset-path:path("M 44 214 C 130 70, 250 250, 372 96"); animation:truck 24s linear infinite}
+.truck-run .badge{width:38px;height:38px;border-radius:12px; display:grid; place-items:center; color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 10px 22px -8px rgba(242,106,15,.8)}
+.truck-run svg{width:20px;height:20px}
 @keyframes truck{to{offset-distance:100%}}
+.hero-float{position:absolute; left:-14px; bottom:-18px; padding:14px 18px; display:flex; align-items:center; gap:12px; border-radius:16px;
+  background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); box-shadow:var(--shadow)}
+.hero-float .hi{width:40px;height:40px;border-radius:11px; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.hero-float .hi svg{width:20px;height:20px}
+.hero-float b{display:block; font-size:1.15rem; letter-spacing:-.02em}
+.hero-float span{font-size:.78rem; color:var(--slate); font-weight:600}
 
-/* mini lead form */
+/* ============================ LEAD FORM ============================ */
 .leadform h3{font-size:1.12rem; margin-bottom:2px}
-.leadform .sub{font-size:.88rem; color:var(--slate); margin-bottom:14px}
+.leadform .sub{font-size:.87rem; color:var(--slate); margin-bottom:13px}
 .field{margin-bottom:11px}
-.field label{display:block; font-size:.78rem; font-weight:700; color:var(--ink-soft); margin-bottom:5px; letter-spacing:.01em}
-.field .req{color:var(--amber)}
-.input,select.input,textarea.input{
-  width:100%; padding:.78em .95em; border:1px solid var(--line); border-radius:12px; background:var(--sky-2);
-  color:var(--ink); font-size:.98rem; font-family:inherit; transition:border-color .18s, box-shadow .18s, background .18s;
-}
-.input:focus,select.input:focus,textarea.input:focus{
-  outline:none; border-color:var(--brand); background:var(--surface);
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 16%,transparent);
-}
-textarea.input{resize:vertical; min-height:96px}
+.field label{display:block; font-size:.78rem; font-weight:700; color:var(--ink-2); margin-bottom:5px}
+.field .req{color:var(--brand-2)}
+.input,select.input,textarea.input{width:100%; padding:.78em .95em; border:1px solid var(--line); border-radius:12px; font-size:.98rem; font-family:inherit; color:var(--ink);
+  background:rgba(255,255,255,.72); transition:border-color .18s, box-shadow .18s, background .18s}
+.input::placeholder{color:var(--slate-2)}
+.input:focus,select.input:focus,textarea.input:focus{outline:none; border-color:var(--brand); background:#fff; box-shadow:var(--ring)}
+textarea.input{resize:vertical; min-height:100px}
 .input.err{border-color:#E5484D; box-shadow:0 0 0 4px rgba(229,72,77,.14)}
-.errmsg{color:#E5484D; font-size:.76rem; margin-top:4px; display:none}
+.errmsg{color:#E5484D; font-size:.75rem; margin-top:4px; display:none}
 .input.err ~ .errmsg{display:block}
-.form-ok{
-  display:none; text-align:center; padding:26px 10px;
-}
+.form-ok{display:none; text-align:center; padding:26px 10px}
 .form-ok.show{display:block; animation:fade .4s var(--ease)}
-.form-ok .ck{width:58px;height:58px;border-radius:50%; background:var(--ok); color:#fff; display:grid;place-items:center; margin:0 auto 14px}
+.form-ok .ck{width:60px;height:60px;border-radius:50%; display:grid; place-items:center; margin:0 auto 14px; color:#fff;
+  background:linear-gradient(135deg,#1BB673,#12A867); box-shadow:0 14px 26px -12px rgba(27,182,115,.7)}
 .form-ok .ck svg{width:30px;height:30px}
 
-/* ============ MARQUEE / STRIP ============ */
-.strip{background:var(--ink); color:#fff; padding:20px 0}
-:root[data-theme="dark"] .strip{background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
-@media (prefers-color-scheme:dark){.strip{background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}}
-.strip .row{display:flex; gap:44px; align-items:center; justify-content:center; flex-wrap:wrap; font-weight:700; letter-spacing:.02em; opacity:.92}
-.strip .row span{display:inline-flex; align-items:center; gap:.5em; font-size:.98rem}
-.strip .row svg{width:18px;height:18px; color:var(--amber)}
-
-/* ============ FEATURES / SERVICES ============ */
+/* ============================ SERVICES ============================ */
 .grid{display:grid; gap:22px}
 .g3{grid-template-columns:repeat(3,1fr)}
 .g2{grid-template-columns:repeat(2,1fr)}
-.g4{grid-template-columns:repeat(4,1fr)}
-.card-s{
-  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:28px;
-  transition:transform .28s var(--ease), box-shadow .28s var(--ease), border-color .28s;
-  position:relative; overflow:hidden;
-}
-.card-s:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:color-mix(in srgb,var(--brand) 40%,var(--line))}
-.card-s .ico{
-  width:52px;height:52px;border-radius:14px; display:grid;place-items:center; margin-bottom:18px;
-  background:var(--brand-050); color:var(--brand);
-}
-.card-s .ico svg{width:26px;height:26px}
-.card-s:nth-child(3n+2) .ico{background:var(--amber-050); color:var(--amber)}
+.card-s{padding:26px; position:relative; overflow:hidden; transition:transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s}
+.card-s:hover{transform:translateY(-6px); box-shadow:0 34px 70px -30px rgba(60,34,8,.45); border-color:rgba(255,145,49,.4)}
+.card-s .ico{width:56px;height:56px;border-radius:15px; display:grid; place-items:center; margin-bottom:18px; color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 12px 24px -12px var(--brand-2)}
+.card-s .ico svg{width:27px;height:27px}
+.card-s:nth-child(3n+2) .ico{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal)); box-shadow:0 12px 24px -14px var(--charcoal)}
+.card-s:nth-child(3n+3) .ico{background:linear-gradient(135deg,var(--brand-2),var(--brand-3)); box-shadow:0 12px 24px -12px var(--brand-3)}
 .card-s h3{font-size:var(--fs-h3); margin-bottom:.5rem}
-.card-s p{color:var(--slate); font-size:.98rem}
-.card-s .more{margin-top:16px; display:inline-flex; align-items:center; gap:.4em; color:var(--brand); font-weight:700; font-size:.9rem}
+.card-s p{color:var(--slate); font-size:.97rem}
+.card-s .more{margin-top:16px; display:inline-flex; align-items:center; gap:.4em; color:var(--brand-2); font-weight:700; font-size:.9rem; cursor:pointer}
 .card-s .more svg{width:15px;height:15px; transition:transform .2s}
 .card-s:hover .more svg{transform:translateX(4px)}
-.tag-km{position:absolute; top:16px; right:18px; font-size:.7rem; font-weight:800; letter-spacing:.08em; color:var(--slate-2); opacity:.7}
 
-/* ============ PROCESS ============ */
-.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:22px; counter-reset:step}
-.step{position:relative; padding-top:20px}
-.step .num{
-  font-size:.86rem; font-weight:800; color:var(--brand); background:var(--brand-050);
-  width:44px;height:44px;border-radius:13px; display:grid;place-items:center; margin-bottom:16px; letter-spacing:.02em;
-}
-.step h3{font-size:1.12rem; margin-bottom:.4rem}
-.step p{color:var(--slate); font-size:.94rem}
-.step::before{content:""; position:absolute; top:42px; left:54px; right:-11px; height:2px; background:repeating-linear-gradient(90deg,var(--line) 0 8px, transparent 8px 16px)}
-.step:last-child::before{display:none}
+/* ============================ PROCESS ============================ */
+.steps{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+.step{padding:24px; position:relative}
+.step .num{font-size:.9rem; font-weight:800; color:#fff; width:46px;height:46px;border-radius:14px; display:grid; place-items:center; margin-bottom:16px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 12px 22px -12px var(--brand-2)}
+.step:nth-child(2) .num{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.step:nth-child(3) .num{background:linear-gradient(135deg,var(--brand-2),var(--brand-3))}
+.step:nth-child(4) .num{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.step h3{font-size:1.1rem; margin-bottom:.4rem}
+.step p{color:var(--slate); font-size:.93rem}
 
-/* ============ STATS BAND ============ */
-.band{
-  background:linear-gradient(135deg,var(--brand),var(--brand-600)); color:#fff; border-radius:26px;
-  padding:clamp(32px,4vw,52px); position:relative; overflow:hidden;
-}
-.band::after{content:""; position:absolute; inset:0; background:radial-gradient(600px 300px at 90% -20%, rgba(255,122,0,.35), transparent 60%)}
+/* ============================ STATS BAND (dark = his black+orange) ============================ */
+.band{position:relative; overflow:hidden; border-radius:26px; padding:clamp(30px,4vw,50px); color:#fff;
+  background:linear-gradient(130deg,var(--charcoal),#0F1319 60%,var(--charcoal-2))}
+.band::after{content:""; position:absolute; inset:0; background:radial-gradient(620px 320px at 86% -10%, rgba(255,145,49,.55), transparent 60%)}
+.band::before{content:""; position:absolute; inset:0; opacity:.5; background:radial-gradient(220px 200px at 16% 120%, rgba(255,145,49,.22), transparent 60%)}
 .band .inner{position:relative; z-index:1; display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center}
 .band .st b{display:block; font-size:clamp(2rem,1.2rem+2.4vw,3rem); font-weight:800; letter-spacing:-.02em}
-.band .st span{opacity:.86; font-size:.94rem; font-weight:600}
-.band .st .u{color:var(--amber)}
-:root[data-theme="dark"] .band{border:1px solid var(--line)}
+.band .st span{opacity:.86; font-size:.92rem; font-weight:600}
+.band .st .u{color:var(--brand)}
 
-/* ============ COVERAGE ============ */
-.coverage{display:grid; grid-template-columns:.9fr 1.1fr; gap:44px; align-items:center}
-.map-lg{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow-sm)}
-.map-lg .frame{position:relative; border-radius:14px; overflow:hidden; background:linear-gradient(160deg,var(--sky-2),var(--brand-050)); aspect-ratio:16/11}
-.map-lg svg{position:absolute; inset:0; width:100%; height:100%}
-.region-list{display:flex; flex-direction:column; gap:14px; margin-top:8px}
-.region{display:flex; gap:14px; align-items:flex-start; padding:16px 18px; border:1px solid var(--line); border-radius:14px; background:var(--surface); transition:border-color .2s, transform .2s}
-.region:hover{border-color:var(--brand); transform:translateX(4px)}
-.region .fx{width:42px;height:42px;flex:0 0 auto;border-radius:11px; background:var(--brand-050); color:var(--brand); display:grid;place-items:center; font-weight:800}
-.region:nth-child(2) .fx{background:var(--amber-050); color:var(--amber)}
+/* ============================ COVERAGE ============================ */
+.coverage{display:grid; grid-template-columns:1fr 1.05fr; gap:40px; align-items:center}
+.map-lg{padding:24px}
+.map-frame{position:relative; border-radius:16px; overflow:hidden; aspect-ratio:16/11; background:linear-gradient(160deg,#FFF3E8,#FFE6D2 60%,#FFF7EF)}
+.map-frame svg{position:absolute; inset:0; width:100%; height:100%}
+.region-list{display:flex; flex-direction:column; gap:14px}
+.region{display:flex; gap:14px; align-items:flex-start; padding:16px 18px; border-radius:15px; transition:transform .2s, border-color .2s;
+  background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd)}
+.region:hover{transform:translateX(5px); border-color:rgba(255,145,49,.5)}
+.region .fx{width:44px;height:44px;flex:0 0 auto;border-radius:12px; display:grid; place-items:center; font-weight:800; color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.region:nth-child(2) .fx{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.region:nth-child(3) .fx{background:linear-gradient(135deg,var(--brand-2),var(--brand-3))}
 .region h4{font-size:1.05rem; margin-bottom:2px}
 .region p{color:var(--slate); font-size:.92rem}
 
-/* ============ ABOUT ============ */
-.about-hero{display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center}
+/* ============================ PARTNERS ============================ */
+.partners{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
+.partner{padding:.7em 1.3em; border-radius:999px; font-weight:800; letter-spacing:.02em; color:var(--ink-2); font-size:1.02rem;
+  background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); box-shadow:var(--shadow-sm)}
+
+/* ============================ ABOUT ============================ */
+.about-hero{display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center}
+.about-copy p{margin-bottom:1rem}
 .stat-tiles{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-.tile{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:22px}
-.tile b{font-size:2rem; font-weight:800; letter-spacing:-.02em; display:block}
+.tile{padding:22px}
+.tile b{font-size:2rem; font-weight:800; letter-spacing:-.02em; display:block; background:linear-gradient(120deg,var(--brand-2),var(--brand)); -webkit-background-clip:text; background-clip:text; color:transparent}
 .tile span{color:var(--slate); font-size:.9rem; font-weight:600}
 .values{display:grid; grid-template-columns:repeat(4,1fr); gap:20px}
-.value .vi{width:48px;height:48px;border-radius:13px;background:var(--amber-050);color:var(--amber);display:grid;place-items:center;margin-bottom:14px}
-.value:nth-child(odd) .vi{background:var(--brand-050); color:var(--brand)}
-.value h4{font-size:1.08rem;margin-bottom:.35rem}
-.value p{color:var(--slate); font-size:.93rem}
+.value{padding:24px}
+.value .vi{width:50px;height:50px;border-radius:14px; display:grid; place-items:center; margin-bottom:14px; color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.value:nth-child(2) .vi{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.value:nth-child(3) .vi{background:linear-gradient(135deg,var(--brand-2),var(--brand-3))}
+.value:nth-child(4) .vi{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.value h4{font-size:1.06rem; margin-bottom:.35rem}
+.value p{color:var(--slate); font-size:.92rem}
 
-/* ============ BLOG ============ */
+/* ============================ BLOG ============================ */
 .posts{display:grid; grid-template-columns:repeat(3,1fr); gap:24px}
-.post{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; transition:transform .28s var(--ease), box-shadow .28s; cursor:pointer; display:flex; flex-direction:column}
-.post:hover{transform:translateY(-6px); box-shadow:var(--shadow)}
+.post{overflow:hidden; cursor:pointer; display:flex; flex-direction:column; padding:0; transition:transform .3s var(--ease), box-shadow .3s}
+.post:hover{transform:translateY(-6px); box-shadow:0 34px 70px -30px rgba(60,34,8,.45)}
 .post .cover{aspect-ratio:16/9; position:relative; overflow:hidden}
 .post .cover svg{position:absolute; inset:0; width:100%; height:100%}
 .post .body{padding:22px; display:flex; flex-direction:column; gap:10px; flex:1}
-.post .meta{display:flex; gap:12px; align-items:center; font-size:.78rem; color:var(--slate); font-weight:600}
-.post .cat{color:var(--brand); background:var(--brand-050); padding:.2em .7em; border-radius:999px; letter-spacing:.02em}
-.post h3{font-size:1.16rem; line-height:1.25}
-.post p{color:var(--slate); font-size:.94rem; flex:1}
-.post .read{color:var(--brand); font-weight:700; font-size:.88rem; display:inline-flex; align-items:center; gap:.4em}
-.blog-note{background:var(--amber-050); border:1px dashed color-mix(in srgb,var(--amber) 50%,var(--line)); border-radius:16px; padding:18px 22px; display:flex; gap:14px; align-items:center; margin-top:34px}
-.blog-note svg{width:26px;height:26px;color:var(--amber); flex:0 0 auto}
-.blog-note p{font-size:.94rem; color:var(--ink-soft)}
+.post .meta{display:flex; gap:10px; align-items:center; font-size:.77rem; color:var(--slate); font-weight:600; flex-wrap:wrap}
+.post .cat{color:var(--brand-2); background:rgba(255,145,49,.12); padding:.2em .7em; border-radius:999px}
+.post h3{font-size:1.14rem; line-height:1.25}
+.post p{color:var(--slate); font-size:.93rem; flex:1}
+.post .read{color:var(--brand-2); font-weight:700; font-size:.87rem; display:inline-flex; align-items:center; gap:.4em}
+.blog-note{padding:18px 22px; display:flex; gap:14px; align-items:center; margin-top:32px}
+.blog-note svg{width:26px;height:26px; color:var(--brand-2); flex:0 0 auto}
+.blog-note p{font-size:.94rem; color:var(--ink-2)}
 
-/* ============ REQUEST / OFFER ============ */
-.offer-grid{display:grid; grid-template-columns:.85fr 1.15fr; gap:44px; align-items:start}
-.offer-aside{position:sticky; top:100px}
-.offer-aside .chip{display:inline-flex; align-items:center; gap:.5em; background:var(--brand-050); color:var(--brand); font-weight:700; font-size:.82rem; padding:.4em .9em; border-radius:999px; margin-bottom:18px}
-.offer-aside h2{font-size:var(--fs-h2); margin-bottom:.8rem}
-.offer-aside .lead{color:var(--slate); margin-bottom:26px}
-.contact-line{display:flex; gap:14px; align-items:center; padding:14px 0; border-top:1px solid var(--line)}
-.contact-line .ci{width:44px;height:44px;border-radius:12px; background:var(--surface); border:1px solid var(--line); display:grid;place-items:center; color:var(--brand); flex:0 0 auto}
-.contact-line small{display:block; color:var(--slate); font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em}
+/* ============================ OFFER ============================ */
+.offer-grid{display:grid; grid-template-columns:.82fr 1.18fr; gap:40px; align-items:start}
+.offer-aside{position:sticky; top:96px; padding:30px}
+.offer-aside .chip{display:inline-flex; align-items:center; gap:.5em; padding:.4em .9em; border-radius:999px; font-weight:700; font-size:.82rem; margin-bottom:16px;
+  background:rgba(255,145,49,.12); color:var(--brand-2)}
+.offer-aside h2{font-size:var(--fs-h2); margin-bottom:.7rem}
+.offer-aside .lead{color:var(--slate); margin-bottom:22px}
+.contact-line{display:flex; gap:13px; align-items:center; padding:14px 0; border-top:1px solid var(--line)}
+.contact-line .ci{width:44px;height:44px;border-radius:12px; flex:0 0 auto; display:grid; place-items:center; color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand-2))}
+.contact-line small{display:block; color:var(--slate); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em}
 .contact-line b{font-size:1.02rem}
-.offer-form{background:var(--surface); border:1px solid var(--line); border-radius:22px; padding:clamp(24px,3vw,38px); box-shadow:var(--shadow)}
+.offer-form{padding:clamp(24px,3vw,38px)}
 .form-row{display:grid; grid-template-columns:1fr 1fr; gap:14px}
-.hint{font-size:.78rem; color:var(--slate-2); margin-top:4px}
+.hint{font-size:.77rem; color:var(--slate-2); margin-top:4px}
 #otherWrap{display:none}
 #otherWrap.show{display:block; animation:fade .3s var(--ease)}
 .route-fields{position:relative}
-.route-fields::before{content:""; position:absolute; left:15px; top:38px; bottom:38px; width:2px; background:repeating-linear-gradient(var(--brand) 0 5px, transparent 5px 10px); opacity:.4}
+.route-fields::before{content:""; position:absolute; left:15px; top:40px; bottom:42px; width:2px; background:repeating-linear-gradient(var(--brand) 0 5px, transparent 5px 10px); opacity:.5}
 .route-fields .field{position:relative; padding-left:38px}
-.route-fields .field::before{content:""; position:absolute; left:9px; top:34px; width:14px;height:14px;border-radius:50%; border:3px solid var(--brand); background:var(--surface)}
-.route-fields .field:last-child::before{border-color:var(--amber)}
+.route-fields .field::before{content:""; position:absolute; left:9px; top:35px; width:14px;height:14px;border-radius:50%; border:3px solid var(--brand); background:#fff}
+.route-fields .field:last-child::before{border-color:var(--charcoal)}
 
-/* ============ CTA FOOTER BANNER ============ */
-.cta-banner{background:var(--ink); color:#fff; border-radius:26px; padding:clamp(36px,5vw,64px); text-align:center; position:relative; overflow:hidden}
-:root[data-theme="dark"] .cta-banner{border:1px solid var(--line)}
-.cta-banner::before{content:""; position:absolute; inset:0; background:radial-gradient(500px 260px at 15% 120%, rgba(11,95,214,.5), transparent 60%), radial-gradient(500px 260px at 85% -20%, rgba(255,122,0,.4), transparent 60%)}
+/* ============================ CTA BANNER (dark) ============================ */
+.cta-banner{position:relative; overflow:hidden; border-radius:26px; padding:clamp(34px,5vw,62px); text-align:center; color:#fff;
+  background:linear-gradient(130deg,var(--charcoal),#0F1319 60%,var(--charcoal-2))}
+.cta-banner::before{content:""; position:absolute; inset:0; background:radial-gradient(520px 280px at 12% 120%, rgba(255,145,49,.55), transparent 60%), radial-gradient(520px 280px at 88% -20%, rgba(255,145,49,.28), transparent 60%)}
 .cta-banner .in{position:relative; z-index:1}
 .cta-banner h2{font-size:var(--fs-h2); margin-bottom:.6rem}
-.cta-banner p{color:#c7d2e3; max-width:52ch; margin:0 auto 26px}
+.cta-banner p{color:#E7DACb; color:#EAD9C6; max-width:52ch; margin:0 auto 26px}
 .cta-banner .btns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
 
-/* ============ FOOTER ============ */
-footer{background:var(--sky-2); border-top:1px solid var(--line); padding:64px 0 30px; margin-top:20px}
-.foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1.2fr; gap:38px}
+/* ============================ FOOTER ============================ */
+footer{margin-top:40px; padding:56px 0 28px}
+.foot-inner{padding:44px clamp(24px,4vw,48px) 28px}
+.foot-grid{display:grid; grid-template-columns:1.5fr 1fr 1fr 1.2fr; gap:36px}
 .foot-brand p{color:var(--slate); font-size:.94rem; margin-top:16px; max-width:34ch}
-.foot h5{font-size:.78rem; text-transform:uppercase; letter-spacing:.12em; color:var(--slate-2); margin-bottom:16px; font-weight:700}
+.foot h5{font-size:.76rem; text-transform:uppercase; letter-spacing:.12em; color:var(--slate-2); margin-bottom:16px; font-weight:800}
 .foot ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:11px}
-.foot ul a{color:var(--slate); font-size:.95rem; cursor:pointer; transition:color .2s}
-.foot ul a:hover{color:var(--brand)}
-.foot .ct{display:flex; gap:10px; align-items:flex-start; color:var(--slate); font-size:.95rem}
-.foot .ct svg{width:17px;height:17px; color:var(--brand); margin-top:3px; flex:0 0 auto}
-.foot-bottom{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:44px; padding-top:22px; border-top:1px solid var(--line); color:var(--slate); font-size:.86rem}
+.foot ul a{color:var(--slate); font-size:.94rem; cursor:pointer; transition:color .2s}
+.foot ul a:hover{color:var(--brand-2)}
+.foot .ct{display:flex; gap:10px; align-items:flex-start; color:var(--slate); font-size:.94rem}
+.foot .ct svg{width:17px;height:17px; color:var(--brand-2); margin-top:3px; flex:0 0 auto}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:40px; padding-top:22px; border-top:1px solid var(--line); color:var(--slate); font-size:.85rem}
 .socials{display:flex; gap:10px}
-.socials a{width:38px;height:38px;border-radius:11px; border:1px solid var(--line); display:grid;place-items:center; color:var(--slate); transition:.2s}
+.socials a{width:38px;height:38px;border-radius:11px; display:grid; place-items:center; color:var(--slate); transition:.2s; background:rgba(255,255,255,.5); border:1px solid var(--line)}
 .socials a:hover{color:#fff; background:var(--brand); border-color:var(--brand)}
 .socials svg{width:17px;height:17px}
 
-/* theme toggle */
-.tt{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;color:var(--ink); transition:.2s}
-.tt:hover{border-color:var(--brand); color:var(--brand)}
-.tt svg{width:19px;height:19px}
-.tt .moon{display:none}
-:root[data-theme="dark"] .tt .sun{display:none}
-:root[data-theme="dark"] .tt .moon{display:block}
-@media (prefers-color-scheme:dark){.tt .sun{display:none}.tt .moon{display:block}}
-:root[data-theme="light"] .tt .sun{display:block}:root[data-theme="light"] .tt .moon{display:none}
-
-/* reveal */
 .reveal{opacity:0; transform:translateY(26px); transition:opacity .7s var(--ease), transform .7s var(--ease)}
 .reveal.in{opacity:1; transform:none}
-
-/* toast */
-.toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,120%); background:var(--ink); color:#fff; padding:14px 20px; border-radius:14px; font-weight:600; font-size:.95rem; box-shadow:var(--shadow); z-index:200; display:flex; gap:10px; align-items:center; transition:transform .4s var(--ease)}
+.toast{position:fixed; left:50%; bottom:26px; transform:translate(-50%,140%); padding:14px 20px; border-radius:14px; font-weight:600; font-size:.95rem; z-index:200; display:flex; gap:10px; align-items:center; transition:transform .4s var(--ease);
+  background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); box-shadow:var(--shadow); color:var(--ink)}
 .toast.show{transform:translate(-50%,0)}
-.toast svg{width:20px;height:20px;color:var(--ok)}
+.toast svg{width:20px;height:20px; color:#1BB673}
 
-/* ============ RESPONSIVE ============ */
-@media (max-width:960px){
-  .hero-grid{grid-template-columns:1fr; gap:36px}
-  .routecard{max-width:460px}
-  .coverage,.about-hero,.offer-grid{grid-template-columns:1fr; gap:32px}
+/* ============================ RESPONSIVE ============================ */
+@media (max-width:980px){
+  .hero-grid,.coverage,.about-hero,.offer-grid{grid-template-columns:1fr; gap:32px}
+  .hero-visual{max-width:480px}
   .offer-aside{position:static}
-  .g4,.g3,.steps,.band .inner,.values,.posts{grid-template-columns:repeat(2,1fr)}
-  .step::before{display:none}
-  .foot-grid{grid-template-columns:1fr 1fr; gap:30px}
+  .g3,.steps,.band .inner,.values,.posts{grid-template-columns:repeat(2,1fr)}
+  .foot-grid{grid-template-columns:1fr 1fr; gap:28px}
 }
-@media (max-width:720px){
-  .navlinks,.callbtn small{display:none}
-  .callbtn{padding:.4em}
-  .burger{display:inline-flex}
-  .nav-cta .btn-amber{display:none}
-  body.menu-open{overflow:hidden}
-  .mobile-menu{
-    position:fixed; inset:74px 0 0; background:var(--sky); z-index:55; padding:24px; transform:translateX(100%);
-    transition:transform .35s var(--ease); display:flex; flex-direction:column; gap:6px;
-  }
-  .mobile-menu.open{transform:none}
-  .mobile-menu a{padding:.9em 1em; border-radius:12px; font-weight:700; font-size:1.1rem; color:var(--ink); border:1px solid var(--line)}
-  .mobile-menu a.active{color:var(--brand); border-color:var(--brand); background:var(--brand-050)}
-  .mobile-menu .btn{margin-top:12px}
+@media (max-width:760px){
+  .navlinks{display:none}
+  .callbtn small{display:none}
+  .callbtn{padding:.3em}
+  .burger{display:flex}
+  .nav-cta .btn-accent{display:none}
 }
-@media (min-width:721px){.mobile-menu{display:none}}
 @media (max-width:560px){
-  .g4,.g3,.g2,.steps,.band .inner,.values,.posts,.form-row,.stat-tiles{grid-template-columns:1fr}
+  .g3,.g2,.steps,.band .inner,.values,.posts,.form-row,.stat-tiles{grid-template-columns:1fr}
   .foot-grid{grid-template-columns:1fr}
-  .hero-trust{gap:20px}
-  section{padding:52px 0}
+  section{padding:50px 0}
+  .hero-float{position:static; margin-top:16px}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
   html{scroll-behavior:auto}
-  .route-path,.truck-run{animation:none}
+  .bg-orb,.rp,.truck-run{animation:none}
 }
 </style>
-<!-- =================== HEADER =================== -->
-<header id="hdr">
-  <div class="wrap nav">
-    <div class="brand" data-nav="home">
-      <span class="logo" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/><circle cx="18.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/></svg>
-      </span>
-      <span>Глобал Карго Спед<small>Транспорт · Логистика</small></span>
-    </div>
+<div class="bg-mesh" aria-hidden="true"></div>
+<div class="bg-orb o1" aria-hidden="true"></div>
+<div class="bg-orb o2" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
 
-    <nav class="navlinks" aria-label="Основна навигация">
-      <a data-nav="home" class="active">Начало</a>
-      <a data-nav="about">За нас</a>
-      <a data-nav="services">Услуги</a>
-      <a data-nav="blog">Блог</a>
-      <a data-nav="offer">Поискай оферта</a>
-    </nav>
-
-    <div class="nav-cta">
-      <a class="callbtn" href="tel:+359877415141" aria-label="Обади се">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-        <span><small>Обади се</small>+359 877 415 141</span>
-      </a>
-      <button class="tt" id="themeBtn" aria-label="Смени тема">
-        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <a class="btn btn-amber" data-nav="offer">Поискай оферта</a>
-      <button class="burger" id="burger" aria-label="Меню">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-      </button>
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap">
+    <div class="navbar">
+      <div class="brand" data-nav="home">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/><circle cx="18.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/></svg></span>
+        <span>Глобал Карго Спед<small>Транспорт · Логистика</small></span>
+      </div>
+      <nav class="navlinks" aria-label="Основна навигация">
+        <a data-nav="home" class="active">Начало</a>
+        <a data-nav="about">За нас</a>
+        <a data-nav="services">Услуги</a>
+        <a data-nav="blog">Блог</a>
+        <a data-nav="offer">Поискай оферта</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="callbtn js-phone-link" href="tel:+359877415141">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
+          <span><small>Обади се</small><span class="js-phone">0877 415 141</span></span>
+        </a>
+        <a class="btn btn-accent" data-nav="offer">Поискай оферта</a>
+        <button class="burger" id="burger" aria-label="Меню"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      </div>
     </div>
   </div>
 </header>
 
-<div class="mobile-menu" id="mobileMenu">
+<div class="scrim" id="scrim"></div>
+<aside class="mobile-menu" id="mobileMenu">
+  <div class="mhead"><button class="mclose" id="mclose" aria-label="Затвори"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
   <a data-nav="home" class="active">Начало</a>
   <a data-nav="about">За нас</a>
   <a data-nav="services">Услуги</a>
   <a data-nav="blog">Блог</a>
   <a data-nav="offer">Поискай оферта</a>
-  <a class="btn btn-primary" href="tel:+359877415141">Обади се сега</a>
-</div>
+  <a class="btn btn-accent js-phone-link" href="tel:+359877415141">Обади се сега</a>
+</aside>
 
 <main>
 
-<!-- =================== HOME =================== -->
+<!-- ============ HOME ============ -->
 <section class="view active hero" id="view-home" data-view="home">
-  <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
   <div class="wrap hero-grid">
     <div>
-      <span class="eyebrow">България · Европа · Турция</span>
-      <h1>Надежден транспорт за <span class="hl">вашия бизнес</span></h1>
-      <p class="lead">Сухопътен и хладилен транспорт, складиране, митническо оформяне и застраховане на товари — с грижа за всеки километър.</p>
+      <span class="hero-badge"><span class="dot"></span> На линия за нови запитвания</span>
+      <h1 id="heroTitle">Вашия товар е <span class="hl">наша грижа</span></h1>
+      <p class="lead" id="heroSub">Сухопътен и хладилен транспорт, групажни и експресни превози, складиране и логистика — в България, Европа и Турция. От малки колети до цели товарни пратки.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary btn-lg" data-nav="offer">Поискай оферта
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="btn btn-ghost btn-lg" data-nav="services">Нашите услуги</a>
+        <a class="btn btn-accent btn-lg" data-nav="offer" id="heroCta">Поискай оферта
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-glass btn-lg" data-nav="services">Нашите услуги</a>
       </div>
       <div class="hero-trust">
-        <div><b class="tnum">24т</b>максимален товар</div>
-        <div><b class="tnum">-25/+25°</b>хладилен режим</div>
-        <div><b>24/7</b>поддръжка</div>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> 15+ години опит</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Европа · Турция · България</span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Товари до 24 тона</span>
       </div>
     </div>
 
-    <div class="routecard">
-      <div class="card">
+    <div class="hero-visual">
+      <div class="glass hero-card">
         <div class="leadform" id="leadFormBox">
-          <h3>Свържете се с нас</h3>
-          <p class="sub">Оставете данни и ще ви потърсим до 1 работен ден.</p>
+          <h3>Изпрати запитване</h3>
+          <p class="sub">Оставете данни — ще ви потърсим до 1 работен ден.</p>
           <form id="leadForm" novalidate>
-            <div class="field">
-              <label>Име <span class="req">*</span></label>
-              <input class="input" name="name" type="text" placeholder="Вашето име" required />
-              <div class="errmsg">Моля, въведете име.</div>
-            </div>
-            <div class="field">
-              <label>Телефон <span class="req">*</span></label>
-              <input class="input" name="phone" type="tel" placeholder="+359 ..." required data-type="phone" />
-              <div class="errmsg">Моля, въведете валиден телефон.</div>
-            </div>
-            <div class="field">
-              <label>Имейл</label>
-              <input class="input" name="email" type="email" placeholder="you@company.com" data-type="email" />
-              <div class="errmsg">Моля, проверете имейла.</div>
-            </div>
-            <button class="btn btn-primary" style="width:100%;margin-top:6px" type="submit">Свържете се с мен</button>
+            <div class="field"><label>Име <span class="req">*</span></label>
+              <input class="input" name="name" type="text" placeholder="Вашето име" required /><div class="errmsg">Моля, въведете име.</div></div>
+            <div class="field"><label>Телефон <span class="req">*</span></label>
+              <input class="input" name="phone" type="tel" placeholder="+359 ..." required data-type="phone" /><div class="errmsg">Моля, въведете валиден телефон.</div></div>
+            <div class="field"><label>Имейл</label>
+              <input class="input" name="email" type="email" placeholder="you@company.com" data-type="email" /><div class="errmsg">Моля, проверете имейла.</div></div>
+            <button class="btn btn-accent" style="width:100%;margin-top:4px" type="submit">Свържете се с мен</button>
           </form>
         </div>
         <div class="form-ok" id="leadOk">
           <div class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <h3>Благодарим!</h3>
-          <p class="muted" style="font-size:.92rem">Получихме вашето запитване и ще се свържем с вас съвсем скоро.</p>
+          <h3>Благодарим!</h3><p class="muted" style="font-size:.92rem">Получихме данните ви и ще се свържем съвсем скоро.</p>
         </div>
+      </div>
+      <div class="hero-float">
+        <span class="hi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
+        <div><b>200+</b><span>доволни клиенти</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- strip (shown under home via home view) -->
-<div class="strip view-extra home-extra">
-  <div class="wrap row">
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Товари от кашон до цяло ремарке</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Застраховани пратки</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Доставка навреме</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Проследяване на маршрута</span>
-  </div>
-</div>
-
-<div class="view-extra home-extra">
+<div class="home-extra">
   <!-- services preview -->
   <section>
     <div class="wrap">
-      <div class="section-head reveal">
-        <span class="eyebrow">Какво предлагаме</span>
-        <h2>Пълен набор транспортни услуги</h2>
-        <p>От единичен палет до цялостна логистика — покриваме всяка стъпка от веригата на доставка.</p>
-      </div>
+      <div class="section-head reveal"><span class="eyebrow">Нашите услуги</span><h2>Пълен набор от услуги</h2><p>От малки колети до големи товарни пратки — разполагаме с експертизата и ресурсите за всяко ваше транспортно изискване.</p></div>
       <div class="grid g3" id="svcPreview"></div>
-      <div style="text-align:center;margin-top:34px" class="reveal">
-        <a class="btn btn-ghost btn-lg" data-nav="services">Виж всички услуги
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
+      <div style="text-align:center;margin-top:32px" class="reveal"><a class="btn btn-glass btn-lg" data-nav="services">Виж всички услуги <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    </div>
+  </section>
+
+  <!-- stats (реални числа от сайта) -->
+  <section style="padding-top:0"><div class="wrap"><div class="band reveal"><div class="inner">
+    <div class="st"><b class="tnum">15<span class="u">+</span></b><span>години опит</span></div>
+    <div class="st"><b class="tnum">200<span class="u">+</span></b><span>клиенти</span></div>
+    <div class="st"><b class="tnum">50<span class="u">+</span></b><span>собствени камиони</span></div>
+    <div class="st"><b class="tnum">100<span class="u">+</span></b><span>нает транспорт</span></div>
+  </div></div></div></section>
+
+  <!-- about teaser -->
+  <section style="padding-top:0">
+    <div class="wrap coverage">
+      <div class="glass map-lg reveal">
+        <div class="map-frame">
+          <svg viewBox="0 0 400 275" aria-hidden="true">
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF9131"/><stop offset="1" stop-color="#171B23"/></linearGradient></defs>
+            <path d="M60 205 C 130 95, 205 250, 250 125 S 345 70, 352 78" fill="none" stroke="url(#rg)" stroke-width="2.8" stroke-dasharray="8 8" class="rp"/>
+            <circle cx="60" cy="205" r="7" fill="#FF9131"/><circle cx="60" cy="205" r="13" fill="#FF9131" opacity=".2"/>
+            <circle cx="250" cy="125" r="6" fill="#F26A0F"/>
+            <circle cx="352" cy="78" r="7" fill="#171B23"/><circle cx="352" cy="78" r="13" fill="#171B23" opacity=".14"/>
+            <text x="60" y="232" text-anchor="middle" font-size="12" font-weight="800" fill="#14181F">България</text>
+            <text x="250" y="151" text-anchor="middle" font-size="12" font-weight="800" fill="#14181F">Европа</text>
+            <text x="352" y="105" text-anchor="middle" font-size="12" font-weight="800" fill="#14181F">Турция</text>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <span class="eyebrow reveal">За нас</span>
+        <h2 class="reveal" style="font-size:var(--fs-h2);margin:.5rem 0 1rem">Превоз на товари от и за Европа</h2>
+        <p class="muted reveal" style="margin-bottom:1.4rem">От малки колети до големи товарни пратки, ние разполагаме с експертизата и ресурсите, за да се справим с всички ваши транспортни изисквания с прецизност и грижа.</p>
+        <div class="region-list">
+          <div class="region reveal"><span class="fx">BG</span><div><h4>България</h4><p>Вътрешен транспорт и дистрибуция до всяка точка в страната.</p></div></div>
+          <div class="region reveal"><span class="fx">EU</span><div><h4>Европа</h4><p>Редовни курсове до и от държавите в Европейския съюз — цели камиони и групаж.</p></div></div>
+          <div class="region reveal"><span class="fx">TR</span><div><h4>Турция</h4><p>Специализирани маршрути за внос и износ до и от Турция.</p></div></div>
+        </div>
       </div>
     </div>
   </section>
@@ -526,248 +506,134 @@ footer{background:var(--sky-2); border-top:1px solid var(--line); padding:64px 0
   <!-- process -->
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="section-head center reveal">
-        <span class="eyebrow">Как работим</span>
-        <h2>Четири стъпки до доставката</h2>
-      </div>
+      <div class="section-head center reveal"><span class="eyebrow">Как работим</span><h2>Четири стъпки до доставката</h2></div>
       <div class="steps">
-        <div class="step reveal"><div class="num">01</div><h3>Запитване</h3><p>Изпращате детайли за товара и маршрута през формата или по телефон.</p></div>
-        <div class="step reveal"><div class="num">02</div><h3>Оферта</h3><p>Получавате прозрачна цена и срок — без скрити условия.</p></div>
-        <div class="step reveal"><div class="num">03</div><h3>Транспорт</h3><p>Товарим и превозваме с подходящото за товара превозно средство.</p></div>
-        <div class="step reveal"><div class="num">04</div><h3>Доставка</h3><p>Доставяме навреме и оставаме на разположение за обратна връзка.</p></div>
+        <div class="glass step reveal"><div class="num">01</div><h3>Запитване</h3><p>Изпращате детайли за товара и маршрута през формата или по телефон.</p></div>
+        <div class="glass step reveal"><div class="num">02</div><h3>Оферта</h3><p>Получавате прозрачна цена и срок — без скрити условия.</p></div>
+        <div class="glass step reveal"><div class="num">03</div><h3>Транспорт</h3><p>Товарим и превозваме с подходящото за товара превозно средство.</p></div>
+        <div class="glass step reveal"><div class="num">04</div><h3>Доставка</h3><p>Доставяме навреме и оставаме на разположение за обратна връзка.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- stats band -->
+  <!-- partners -->
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="band reveal">
-        <div class="inner">
-          <div class="st"><b class="tnum">3</b><span>държави на обслужване</span></div>
-          <div class="st"><b class="tnum">24<span class="u">т</span></b><span>максимален товар</span></div>
-          <div class="st"><b class="tnum">6</b><span>вида услуги</span></div>
-          <div class="st"><b class="tnum">100<span class="u">%</span></b><span>застраховани товари</span></div>
-        </div>
+      <div class="section-head center reveal"><span class="eyebrow">Нашите партньори</span><h2>Компании, които ни се довериха</h2></div>
+      <div class="partners reveal">
+        <span class="partner">Хебър</span><span class="partner">Hraninvest</span><span class="partner">SUICO</span><span class="partner">Lenox</span>
+        <span class="partner">STAM</span><span class="partner">Donki</span><span class="partner">Fudada</span><span class="partner">Конкорд</span>
       </div>
     </div>
   </section>
 
-  <!-- coverage -->
-  <section style="padding-top:0">
-    <div class="wrap coverage">
-      <div class="map-lg reveal">
-        <div class="frame">
-          <svg viewBox="0 0 400 275" aria-hidden="true">
-            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--brand)"/><stop offset="1" stop-color="var(--amber)"/></linearGradient></defs>
-            <path d="M60 200 C 130 90, 200 250, 250 120 S 340 60, 350 70" fill="none" stroke="url(#rg)" stroke-width="2.6" stroke-dasharray="7 7" class="route-path"/>
-            <circle cx="60" cy="200" r="7" fill="var(--brand)"/><circle cx="60" cy="200" r="13" fill="var(--brand)" opacity=".18"/>
-            <circle cx="250" cy="120" r="6" fill="var(--brand)"/>
-            <circle cx="350" cy="70" r="7" fill="var(--amber)"/><circle cx="350" cy="70" r="13" fill="var(--amber)" opacity=".2"/>
-            <text x="60" y="228" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">България</text>
-            <text x="250" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Европа</text>
-            <text x="350" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">Турция</text>
-          </svg>
-        </div>
-      </div>
-      <div>
-        <span class="eyebrow reveal">География на услугите</span>
-        <h2 class="reveal" style="font-size:var(--fs-h2);margin:.5rem 0 1rem">Превозваме навсякъде, където сте вие</h2>
-        <div class="region-list">
-          <div class="region reveal"><span class="fx">BG</span><div><h4>България</h4><p>Вътрешен транспорт и дистрибуция до всяка точка в страната.</p></div></div>
-          <div class="region reveal"><span class="fx">EU</span><div><h4>Европа</h4><p>Редовни курсове до и от държавите в Европейския съюз.</p></div></div>
-          <div class="region reveal"><span class="fx">TR</span><div><h4>Турция</h4><p>Специализирани маршрути с митническо оформяне при внос и износ.</p></div></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA banner -->
-  <section style="padding-top:0">
-    <div class="wrap">
-      <div class="cta-banner reveal">
-        <div class="in">
-          <h2>Имате товар за превоз?</h2>
-          <p>Получете безплатна консултация и оферта, съобразена с вашия маршрут и вид товар.</p>
-          <div class="btns">
-            <a class="btn btn-amber btn-lg" data-nav="offer">Поискай оферта</a>
-            <a class="btn btn-ghost btn-lg" href="tel:+359877415141" style="color:#fff;border-color:rgba(255,255,255,.3)">+359 877 415 141</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- CTA -->
+  <section style="padding-top:0"><div class="wrap"><div class="cta-banner reveal"><div class="in">
+    <h2>Имате товар за превоз?</h2>
+    <p>Изпратете запитване или се свържете с нас за оферта, съобразена с вашия маршрут и вид товар.</p>
+    <div class="btns"><a class="btn btn-accent btn-lg" data-nav="offer">Поискай оферта</a><a class="btn btn-glass btn-lg js-phone-link" href="tel:+359877415141" style="color:#fff;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)"><span class="js-phone">0877 415 141</span></a></div>
+  </div></div></div></section>
 </div>
 
-<!-- =================== ABOUT =================== -->
+<!-- ============ ABOUT ============ -->
 <section class="view" id="view-about" data-view="about">
   <div class="wrap">
     <div class="about-hero">
-      <div>
+      <div class="about-copy">
         <span class="eyebrow">За нас</span>
-        <h1 style="font-size:var(--fs-h2);margin:.6rem 0 1.1rem">Партньор, на когото можете да разчитате</h1>
-        <p class="muted" style="font-size:1.08rem;margin-bottom:1.1rem">Глобал Карго Спед е надежден партньор в транспортните решения, посветен на предоставянето на първокласни спедиторски услуги в България, Европа и Турция.</p>
-        <p class="muted" style="margin-bottom:1.1rem">Разполагаме с бордови и хладилни камиони за товари с тегло до 24 тона — палети, машини, топове плат, кашони и каси. Предлагаме и модерни складови площи, митническо оформяне и застраховане на товари за пълна защита на вашата стока.</p>
-        <p class="muted">Вярваме, че добрият транспорт е този, за който не се налага да мислите. Затова поемаме грижата за детайлите — от товаренето до доставката.</p>
+        <h1 style="font-size:var(--fs-h2);margin:.6rem 0 1.1rem">Превоз на товари от и за Европа</h1>
+        <p class="muted" style="font-size:1.08rem">От малки колети до големи товарни пратки, ние разполагаме с експертизата и ресурсите, за да се справим с всички ваши транспортни изисквания с прецизност и грижа.</p>
+        <p class="muted">Разполагаме със значителен брой собствени и наети бордови камиони, подходящи за превоз на палети, машини, топове плат, кашони, каси и дървени щайги — с товароносимост до 24 тона. За чувствителни товари предлагаме хладилни превози с температурен режим от -25°C до +25°C.</p>
+        <p class="muted">Освен транспорт, предлагаме и модерни складови бази, стратегически разположени за лесен достъп и ефективна дистрибуция на стоките. Защото за нас вашия товар е наша грижа.</p>
       </div>
       <div class="stat-tiles">
-        <div class="tile reveal"><b class="tnum">24т</b><span>Максимален товар на курс</span></div>
-        <div class="tile reveal"><b class="tnum">3</b><span>Държави на обслужване</span></div>
-        <div class="tile reveal"><b class="tnum">-25/+25°</b><span>Температурен режим</span></div>
-        <div class="tile reveal"><b class="tnum">100%</b><span>Застраховани пратки</span></div>
+        <div class="glass tile reveal"><b class="tnum">15+</b><span>Години опит</span></div>
+        <div class="glass tile reveal"><b class="tnum">200+</b><span>Доволни клиенти</span></div>
+        <div class="glass tile reveal"><b class="tnum">50+</b><span>Собствени камиони</span></div>
+        <div class="glass tile reveal"><b class="tnum">100+</b><span>Нает транспорт</span></div>
       </div>
     </div>
   </div>
-
-  <div class="wrap" style="margin-top:clamp(56px,7vw,90px)">
-    <div class="section-head center reveal">
-      <span class="eyebrow">Нашите ценности</span>
-      <h2 style="font-size:var(--fs-h2)">Какво ни отличава</h2>
-    </div>
+  <div class="wrap" style="margin-top:clamp(54px,7vw,88px)">
+    <div class="section-head center reveal"><span class="eyebrow">Нашите ценности</span><h2 style="font-size:var(--fs-h2)">Какво ни отличава</h2></div>
     <div class="values">
-      <div class="value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Надеждност</h4><p>Спазваме сроковете и поетите ангажименти при всеки курс.</p></div>
-      <div class="value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><h4>Скорост</h4><p>Бърза реакция на запитвания и оптимизирани маршрути.</p></div>
-      <div class="value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><h4>Прозрачност</h4><p>Ясни цени и условия — без изненади и скрити такси.</p></div>
-      <div class="value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21l8.84-8.61a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h4>Грижа</h4><p>Отношение към всеки товар, сякаш е наш собствен.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Надеждност</h4><p>Спазваме сроковете и поетите ангажименти при всеки курс.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><h4>Скорост</h4><p>Бърза реакция на запитвания и оптимизирани маршрути.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><h4>Прозрачност</h4><p>Ясни цени и условия — без изненади и скрити такси.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21l8.84-8.61a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h4>Грижа</h4><p>Отношение към всеки товар, сякаш е наш собствен.</p></div>
     </div>
   </div>
-
-  <div class="wrap" style="margin-top:clamp(56px,7vw,90px)">
-    <div class="cta-banner reveal">
-      <div class="in">
-        <h2>Нека поемем вашата логистика</h2>
-        <p>Свържете се с нас за индивидуално решение, съобразено с нуждите на вашия бизнес.</p>
-        <div class="btns"><a class="btn btn-amber btn-lg" data-nav="offer">Поискай оферта</a></div>
-      </div>
-    </div>
-  </div>
+  <div class="wrap" style="margin-top:clamp(54px,7vw,88px)"><div class="cta-banner reveal"><div class="in">
+    <h2>Нека поемем вашата логистика</h2><p>Свържете се с нас за индивидуално решение, съобразено с нуждите на вашия бизнес.</p>
+    <div class="btns"><a class="btn btn-accent btn-lg" data-nav="offer">Поискай оферта</a></div>
+  </div></div></div>
 </section>
 
-<!-- =================== SERVICES =================== -->
+<!-- ============ SERVICES ============ -->
 <section class="view" id="view-services" data-view="services">
   <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Услуги</span>
-      <h1 style="font-size:var(--fs-h2);margin:.6rem 0 .7rem">Транспорт и логистика от край до край</h1>
-      <p>Изберете услугата, която ви е нужна — или ни оставете да съставим цялостно решение за вашия товар.</p>
-    </div>
+    <div class="section-head reveal"><span class="eyebrow">Услуги</span><h1 style="font-size:var(--fs-h2);margin:.6rem 0 .7rem">Пълен набор от услуги</h1><p>Изберете услугата, която ви е нужна — или ни оставете да съставим цялостно решение за вашия товар.</p></div>
     <div class="grid g3" id="svcFull"></div>
-
-    <div class="offer-form reveal" style="margin-top:44px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap">
-      <div>
-        <h3 style="font-size:var(--fs-h3);margin-bottom:.3rem">Не сте сигурни коя услуга ви трябва?</h3>
-        <p class="muted">Предлагаме безплатна консултация и ще ви насочим към най-доброто решение.</p>
-      </div>
-      <a class="btn btn-primary btn-lg" data-nav="offer">Поискай безплатна консултация</a>
+    <div class="glass reveal" style="margin-top:40px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap">
+      <div><h3 style="font-size:var(--fs-h3);margin-bottom:.3rem">Не сте сигурни коя услуга ви трябва?</h3><p class="muted">Нашите служители са винаги на разположение да ви обърнат внимание — безплатна консултация.</p></div>
+      <a class="btn btn-dark btn-lg" data-nav="offer">Поискай безплатна консултация</a>
     </div>
   </div>
 </section>
 
-<!-- =================== BLOG =================== -->
+<!-- ============ BLOG ============ -->
 <section class="view" id="view-blog" data-view="blog">
   <div class="wrap">
-    <div class="section-head reveal">
-      <span class="eyebrow">Блог</span>
-      <h1 style="font-size:var(--fs-h2);margin:.6rem 0 .7rem">Полезно от света на транспорта</h1>
-      <p>Съвети, новини и добри практики за товарния транспорт, логистиката и митническото оформяне.</p>
-    </div>
+    <div class="section-head reveal"><span class="eyebrow">Блог</span><h1 style="font-size:var(--fs-h2);margin:.6rem 0 .7rem">Полезно от света на транспорта</h1><p>Съвети, новини и добри практики за товарния транспорт, логистиката и спедицията.</p></div>
     <div class="posts" id="blogList"></div>
-    <div class="blog-note reveal">
+    <div class="glass blog-note reveal">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
       <p><b>Нови статии всеки месец.</b> Публикуваме нови материали редовно — управлявани лесно през административния панел, без нужда от програмист.</p>
     </div>
   </div>
 </section>
 
-<!-- =================== OFFER / REQUEST =================== -->
+<!-- ============ OFFER ============ -->
 <section class="view" id="view-offer" data-view="offer">
   <div class="wrap offer-grid">
-    <div class="offer-aside">
+    <div class="glass offer-aside">
       <span class="chip">Безплатна оферта</span>
       <h2>Поискай оферта</h2>
-      <p class="lead">Попълнете детайлите за вашия товар и маршрут. Ще ви изпратим прозрачна оферта възможно най-бързо.</p>
-
-      <div class="contact-line">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
-        <div><small>Телефон</small><b>+359 877 415 141</b></div>
-      </div>
-      <div class="contact-line">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></span>
-        <div><small>Имейл</small><b>office@gcargosped.com</b></div>
-      </div>
-      <div class="contact-line">
-        <span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-        <div><small>Работно време</small><b>Пон – Пет · 09:00 – 18:00</b></div>
-      </div>
+      <p class="lead">Изпратете запитване или се свържете с нас за оферта. Попълнете детайлите за товара и маршрута — ще ви отговорим възможно най-бързо.</p>
+      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><div><small>Телефон</small><b><a class="js-phone js-phone-link" href="tel:+359877415141">0877 415 141</a></b></div></div>
+      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></span><div><small>Имейл</small><b><a class="js-email" href="mailto:gcargosped@gmail.com">gcargosped@gmail.com</a></b></div></div>
+      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><div><small>Работно време</small><b>Пон – Пет · 09:00 – 18:00</b></div></div>
     </div>
 
-    <div class="offer-form">
+    <div class="glass offer-form">
       <form id="offerForm" novalidate>
         <div class="form-row">
-          <div class="field">
-            <label>Име <span class="req">*</span></label>
-            <input class="input" name="name" type="text" placeholder="Име и фамилия" required />
-            <div class="errmsg">Моля, въведете име.</div>
-          </div>
-          <div class="field">
-            <label>Телефон <span class="req">*</span></label>
-            <input class="input" name="phone" type="tel" placeholder="+359 ..." required data-type="phone" />
-            <div class="errmsg">Моля, въведете валиден телефон.</div>
-          </div>
+          <div class="field"><label>Име <span class="req">*</span></label><input class="input" name="name" type="text" placeholder="Име и фамилия" required /><div class="errmsg">Моля, въведете име.</div></div>
+          <div class="field"><label>Телефон <span class="req">*</span></label><input class="input" name="phone" type="tel" placeholder="+359 ..." required data-type="phone" /><div class="errmsg">Моля, въведете валиден телефон.</div></div>
         </div>
-        <div class="field">
-          <label>Имейл <span class="req">*</span></label>
-          <input class="input" name="email" type="email" placeholder="you@company.com" required data-type="email" />
-          <div class="errmsg">Моля, въведете валиден имейл.</div>
-        </div>
-
+        <div class="field"><label>Имейл <span class="req">*</span></label><input class="input" name="email" type="email" placeholder="you@company.com" required data-type="email" /><div class="errmsg">Моля, въведете валиден имейл.</div></div>
         <div class="route-fields">
-          <div class="field">
-            <label>Начална дестинация <span class="req">*</span></label>
-            <input class="input" name="from" id="fromField" type="text" placeholder="Град / адрес на товарене" required autocomplete="off" />
-            <div class="errmsg">Моля, въведете начална дестинация.</div>
-          </div>
-          <div class="field">
-            <label>Крайна дестинация <span class="req">*</span></label>
-            <input class="input" name="to" id="toField" type="text" placeholder="Град / адрес на доставка" required autocomplete="off" />
-            <div class="errmsg">Моля, въведете крайна дестинация.</div>
-          </div>
+          <div class="field"><label>Начална дестинация <span class="req">*</span></label><input class="input" name="from" type="text" placeholder="Град / адрес на товарене" required autocomplete="off" list="cities" /><div class="errmsg">Моля, въведете начална дестинация.</div></div>
+          <div class="field"><label>Крайна дестинация <span class="req">*</span></label><input class="input" name="to" type="text" placeholder="Град / адрес на доставка" required autocomplete="off" list="cities" /><div class="errmsg">Моля, въведете крайна дестинация.</div></div>
         </div>
-
-        <div class="field">
-          <label>Тип товар <span class="req">*</span></label>
+        <datalist id="cities">
+          <option value="София"></option><option value="Пловдив"></option><option value="Варна"></option><option value="Бургас"></option><option value="Русе"></option><option value="Стара Загора"></option>
+          <option value="Истанбул, Турция"></option><option value="Мюнхен, Германия"></option><option value="Виена, Австрия"></option><option value="Милано, Италия"></option><option value="Букурещ, Румъния"></option><option value="Солун, Гърция"></option>
+        </datalist>
+        <div class="field"><label>Тип товар <span class="req">*</span></label>
           <select class="input" name="cargo" id="cargoSelect" required>
             <option value="" disabled selected>Изберете тип товар…</option>
-            <option>Кола / Автомобил</option>
-            <option>Палет</option>
-            <option>Ремарке</option>
-            <option>Кашон / Каса</option>
-            <option>Машина / Оборудване</option>
-            <option>Групажен товар</option>
-            <option value="other">Друго…</option>
-          </select>
-          <div class="errmsg">Моля, изберете тип товар.</div>
+            <option>Кола / Автомобил</option><option>Палет</option><option>Ремарке</option><option>Кашон / Каса</option>
+            <option>Машина / Оборудване</option><option>Групажен товар</option><option>Метали (гондола)</option><option value="other">Друго…</option>
+          </select><div class="errmsg">Моля, изберете тип товар.</div>
         </div>
-
-        <div class="field" id="otherWrap">
-          <label>Опишете товара</label>
-          <input class="input" name="cargoOther" type="text" placeholder="Какъв е товарът?" />
-        </div>
-
-        <div class="field">
-          <label>Допълнителна информация</label>
-          <textarea class="input" name="message" placeholder="Тегло, размери, дата на товарене, специални изисквания…"></textarea>
-          <p class="hint">По желание — колкото повече детайли, толкова по-точна оферта.</p>
-        </div>
-
-        <button class="btn btn-primary btn-lg" type="submit" style="width:100%">Изпрати запитване
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
-        </button>
+        <div class="field" id="otherWrap"><label>Опишете товара</label><input class="input" name="cargoOther" type="text" placeholder="Какъв е товарът?" /></div>
+        <div class="field"><label>Допълнителна информация</label><textarea class="input" name="message" placeholder="Тегло, размери, дата на товарене, специални изисквания…"></textarea><p class="hint">По желание — колкото повече детайли, толкова по-точна оферта.</p></div>
+        <button class="btn btn-accent btn-lg" type="submit" style="width:100%">Изпрати запитване <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
       </form>
       <div class="form-ok" id="offerOk">
         <div class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
-        <h3>Запитването е изпратено!</h3>
-        <p class="muted" style="font-size:.95rem;max-width:34ch;margin:.4rem auto 0">Благодарим ви. Ще прегледаме детайлите и ще се свържем с вас с оферта в най-кратък срок.</p>
+        <h3>Запитването е изпратено!</h3><p class="muted" style="font-size:.95rem;max-width:34ch;margin:.4rem auto 0">Благодарим ви. Ще прегледаме детайлите и ще се свържем с оферта в най-кратък срок.</p>
       </div>
     </div>
   </div>
@@ -775,55 +641,35 @@ footer{background:var(--sky-2); border-top:1px solid var(--line); padding:64px 0
 
 </main>
 
-<!-- =================== FOOTER =================== -->
+<!-- ============ FOOTER ============ -->
 <footer>
-  <div class="wrap">
+  <div class="wrap"><div class="glass foot-inner">
     <div class="foot-grid">
       <div class="foot-brand">
-        <div class="brand" data-nav="home" style="cursor:pointer">
-          <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/><circle cx="18.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/></svg></span>
-          <span>Глобал Карго Спед<small>Транспорт · Логистика</small></span>
-        </div>
-        <p>Надежден сухопътен и хладилен транспорт, складиране и логистика в България, Европа и Турция.</p>
+        <div class="brand" data-nav="home" style="cursor:pointer"><span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/><circle cx="18.5" cy="18.5" r="2.5" fill="#fff" stroke="none"/></svg></span><span>Глобал Карго Спед<small>Транспорт · Логистика</small></span></div>
+        <p>Вашия товар е наша грижа. Транспорт, складиране и логистика в България, Европа и Турция.</p>
       </div>
-      <div class="foot">
-        <h5>Навигация</h5>
-        <ul>
-          <li><a data-nav="home">Начало</a></li>
-          <li><a data-nav="about">За нас</a></li>
-          <li><a data-nav="services">Услуги</a></li>
-          <li><a data-nav="blog">Блог</a></li>
-          <li><a data-nav="offer">Поискай оферта</a></li>
-        </ul>
-      </div>
-      <div class="foot">
-        <h5>Услуги</h5>
-        <ul>
-          <li><a data-nav="services">Сухопътен транспорт</a></li>
-          <li><a data-nav="services">Хладилен транспорт</a></li>
-          <li><a data-nav="services">Складиране и логистика</a></li>
-          <li><a data-nav="services">Митническо оформяне</a></li>
-          <li><a data-nav="services">Застраховане на товари</a></li>
-        </ul>
-      </div>
-      <div class="foot">
-        <h5>Контакти</h5>
-        <ul>
-          <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><a href="tel:+359877415141">+359 877 415 141</a></li>
-          <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg><a href="mailto:office@gcargosped.com">office@gcargosped.com</a></li>
-          <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>София, България</span></li>
-        </ul>
-      </div>
+      <div class="foot"><h5>Навигация</h5><ul>
+        <li><a data-nav="home">Начало</a></li><li><a data-nav="about">За нас</a></li><li><a data-nav="services">Услуги</a></li><li><a data-nav="blog">Блог</a></li><li><a data-nav="offer">Поискай оферта</a></li>
+      </ul></div>
+      <div class="foot"><h5>Услуги</h5><ul>
+        <li><a data-nav="services">Сухопътен транспорт</a></li><li><a data-nav="services">Хладилни превози</a></li><li><a data-nav="services">Групажни превози</a></li><li><a data-nav="services">Складиране и логистика</a></li><li><a data-nav="services">Безплатна консултация</a></li>
+      </ul></div>
+      <div class="foot"><h5>Контакти</h5><ul>
+        <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><a class="js-phone js-phone-link" href="tel:+359877415141">0877 415 141</a></li>
+        <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg><a class="js-email" href="mailto:gcargosped@gmail.com">gcargosped@gmail.com</a></li>
+        <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>София, България</span></li>
+      </ul></div>
     </div>
     <div class="foot-bottom">
-      <span>© <span id="yr"></span> Глобал Карго Спед. Всички права запазени.</span>
+      <span>© <span id="yr"></span> Глобал Карго Спед ЕООД. Всички права запазени.</span>
       <div class="socials">
         <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
         <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg></a>
         <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM0 8h5v16H0zM8 8h4.8v2.2h.07c.67-1.2 2.3-2.5 4.73-2.5C22.4 7.7 24 10 24 14v10h-5v-8.6c0-2-.7-3.4-2.5-3.4-1.36 0-2.17.9-2.53 1.8-.13.32-.17.76-.17 1.2V24H8z"/></svg></a>
       </div>
     </div>
-  </div>
+  </div></div>
 </footer>
 
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg">Готово</span></div>
@@ -831,152 +677,129 @@ footer{background:var(--sky-2); border-top:1px solid var(--line); padding:64px 0
 <script>
 (function(){
   "use strict";
+  var DEFAULT_CONTENT = {
+    heroTitle: 'Вашия товар е <span class="hl">наша грижа</span>',
+    heroSub: 'Сухопътен и хладилен транспорт, групажни и експресни превози, складиране и логистика — в България, Европа и Турция. От малки колети до цели товарни пратки.',
+    heroCta: 'Поискай оферта',
+    phone: '0877 415 141',
+    phoneRaw: '+359877415141',
+    email: 'gcargosped@gmail.com'
+  };
+  var DEFAULT_POSTS = [
+    {cat:"Съвети", date:"Юли 2026", read:"4 мин", h:210, t:"5 съвета за безопасен транспорт на палетизирани товари",
+      d:"Правилното подреждане и укрепване на палетите пази стоката и спестява разходи. Ето какво да имате предвид преди товарене."},
+    {cat:"Хладилен транспорт", date:"Юни 2026", read:"5 мин", h:150, t:"Хладилен транспорт: как да запазите качеството на стоката",
+      d:"Температурният режим е критичен за хранителни и чувствителни товари. Разглеждаме добрите практики при превоз от -25°C до +25°C."},
+    {cat:"Логистика", date:"Май 2026", read:"6 мин", h:30, t:"Групаж или цял камион — кое е по-изгодно за вашия товар",
+      d:"Кога си струва да комбинирате пратки (LTL) и кога е по-добре цял камион (FTL). Кратък наръчник, който ще ви спести пари."}
+  ];
+  function load(key, def){ try{ var v=localStorage.getItem(key); return v? JSON.parse(v): def; }catch(e){ return def; } }
+  var CONTENT = Object.assign({}, DEFAULT_CONTENT, load('gcs_content', {}));
+  var POSTS = load('gcs_posts', DEFAULT_POSTS);
 
-  /* ---------- data ---------- */
+  function applyContent(){
+    var ht=document.getElementById('heroTitle'); if(ht) ht.innerHTML=CONTENT.heroTitle;
+    var hs=document.getElementById('heroSub'); if(hs) hs.textContent=CONTENT.heroSub;
+    var hc=document.getElementById('heroCta'); if(hc) hc.childNodes[0].nodeValue=CONTENT.heroCta+' ';
+    document.querySelectorAll('.js-phone').forEach(function(el){ el.textContent=CONTENT.phone; });
+    document.querySelectorAll('.js-phone-link').forEach(function(el){ el.setAttribute('href','tel:'+CONTENT.phoneRaw); });
+    document.querySelectorAll('.js-email').forEach(function(el){ el.textContent=CONTENT.email; el.setAttribute('href','mailto:'+CONTENT.email); });
+  }
+
   var SERVICES = [
-    {km:"КМ 01", t:"Сухопътен транспорт", d:"Бордови камиони до 24 тона за палети, машини, топове плат, кашони и каси — в България, Европа и Турция.",
+    {t:"Сухопътен транспорт", d:"Пътуваме в цяла Европа, Турция и вътрешно в България — бордови камиони до 24 тона за палети, машини, кашони и каси.",
       ic:'<path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'},
-    {km:"КМ 02", t:"Хладилен транспорт", d:"Температурен режим от -25°C до +25°C за стоки, изискващи контролирана температура по време на превоза.",
-      ic:'<path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19"/>'},
-    {km:"КМ 03", t:"Складиране и логистика", d:"Модерни складови площи и системи за съхранение, обработка и ефективна дистрибуция на вашите стоки.",
+    {t:"Хладилни превози", d:"Транспорт с контролирана температура от -25°C до +25°C за храни и чувствителни към температура товари.",
+      ic:'<path d="M12 2v20M4.5 7l15 10M19.5 7l-15 10M2 12h20"/>'},
+    {t:"Групажни превози", d:"Комбиниране на по-малки пратки в един курс (LTL) за по-ефективна цена — както и цели камиони (FTL).",
+      ic:'<rect x="3" y="8" width="8" height="8" rx="1"/><rect x="13" y="4" width="8" height="6" rx="1"/><rect x="13" y="12" width="8" height="8" rx="1"/>'},
+    {t:"Експресни превози с бусове", d:"Бързи доставки с бусове за спешни и по-малки товари — когато времето е от значение.",
+      ic:'<path d="M3 5h11v11H3z"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/>'},
+    {t:"Складиране и логистика", d:"Складовете ни са стратегически разположени за лесен достъп и ефективна дистрибуция на стоките.",
       ic:'<path d="M3 21V8l9-5 9 5v13"/><path d="M3 21h18M9 21v-6h6v6"/>'},
-    {km:"КМ 04", t:"Митническо оформяне", d:"Митническо представителство и изготвяне на документи при внос и износ — включително маршрути до и от Турция.",
-      ic:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/>'},
-    {km:"КМ 05", t:"Застраховане на товари", d:"Допълнителна застраховка, която осигурява защита срещу рискове за товара по време на транспорта.",
-      ic:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'},
-    {km:"КМ 06", t:"Безплатна консултация", d:"Ще ви насочим към най-подходящото транспортно решение според вида товар, маршрута и бюджета.",
+    {t:"Безплатна консултация", d:"Нашите служители са винаги на разположение да ви обърнат внимание и да ви насочат към най-доброто решение.",
       ic:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'}
   ];
-
-  var POSTS = [
-    {cat:"Съвети", date:"Юли 2026", read:"4 мин", t:"5 съвета за безопасен транспорт на палетизирани товари",
-      d:"Правилното подреждане и укрепване на палетите пази стоката и спестява разходи. Ето какво да имате предвид преди товарене.", h:210},
-    {cat:"Хладилен транспорт", date:"Юни 2026", read:"5 мин", t:"Хладилен транспорт: как да запазите качеството на стоката",
-      d:"Температурният режим е критичен за хранителни и чувствителни товари. Разглеждаме добрите практики при превоз от -25°C до +25°C.", h:150},
-    {cat:"Митници", date:"Май 2026", read:"6 мин", t:"Митническо оформяне при внос от Турция — какво трябва да знаете",
-      d:"Документи, срокове и чести грешки при внос от Турция. Кратък наръчник, който ще ви спести време и главоболия.", h:28}
-  ];
-
-  /* ---------- render services ---------- */
   function svcCard(s){
-    return '<article class="card-s reveal"><span class="tag-km tnum">'+s.km+'</span>'+
-      '<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+s.ic+'</svg></div>'+
-      '<h3>'+s.t+'</h3><p>'+s.d+'</p>'+
-      '<a class="more" data-nav="offer">Поискай оферта <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></article>';
+    return '<article class="glass card-s reveal"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+s.ic+'</svg></div>'+
+      '<h3>'+s.t+'</h3><p>'+s.d+'</p><a class="more" data-nav="offer">Поискай оферта <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></article>';
   }
   document.getElementById('svcPreview').innerHTML = SERVICES.slice(0,3).map(svcCard).join('');
   document.getElementById('svcFull').innerHTML = SERVICES.map(svcCard).join('');
 
-  /* ---------- render blog ---------- */
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
   function postCard(p){
-    return '<article class="post reveal">'+
-      '<div class="cover"><svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">'+
-        '<rect width="400" height="225" fill="var(--brand-050)"/>'+
-        '<path d="M-20 '+p.h+' C 100 '+(p.h-70)+', 260 '+(p.h+60)+', 420 '+(p.h-40)+'" fill="none" stroke="var(--brand)" stroke-width="3" stroke-dasharray="8 8" opacity=".55"/>'+
-        '<circle cx="70" cy="'+(p.h-24)+'" r="9" fill="var(--amber)"/>'+
-        '<circle cx="330" cy="'+(p.h-58)+'" r="7" fill="var(--brand)"/>'+
-      '</svg></div>'+
-      '<div class="body"><div class="meta"><span class="cat">'+p.cat+'</span><span>'+p.date+'</span><span>· '+p.read+'</span></div>'+
-      '<h3>'+p.t+'</h3><p>'+p.d+'</p>'+
-      '<span class="read">Прочети още <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></article>';
+    var h=p.h||150;
+    return '<article class="glass post reveal"><div class="cover"><svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice">'+
+      '<rect width="400" height="225" fill="#FFF0E1"/>'+
+      '<path d="M-20 '+h+' C 100 '+(h-70)+', 260 '+(h+60)+', 420 '+(h-40)+'" fill="none" stroke="#FF9131" stroke-width="3" stroke-dasharray="8 8" opacity=".6"/>'+
+      '<circle cx="70" cy="'+(h-24)+'" r="9" fill="#F26A0F"/><circle cx="330" cy="'+(h-58)+'" r="7" fill="#171B23"/></svg></div>'+
+      '<div class="body"><div class="meta"><span class="cat">'+esc(p.cat)+'</span><span>'+esc(p.date)+'</span>'+(p.read?'<span>· '+esc(p.read)+'</span>':'')+'</div>'+
+      '<h3>'+esc(p.t)+'</h3><p>'+esc(p.d)+'</p><span class="read">Прочети още <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div></article>';
   }
   document.getElementById('blogList').innerHTML = POSTS.map(postCard).join('');
 
-  /* ---------- routing ---------- */
-  var views = ['home','about','services','blog','offer'];
+  var views=['home','about','services','blog','offer'];
   function setActive(name){
     if(views.indexOf(name)<0) name='home';
     document.querySelectorAll('.view').forEach(function(v){ v.classList.toggle('active', v.getAttribute('data-view')===name); });
-    // home-only extras (strip, previews) live outside the hero section
-    document.querySelectorAll('.home-extra').forEach(function(e){ e.style.display = (name==='home')?'':'none'; });
-    document.querySelectorAll('[data-nav]').forEach(function(a){
-      if(a.classList.contains('brand')||a.classList.contains('logo')) return;
-      if(a.classList.contains('navlinks')) return;
-    });
-    document.querySelectorAll('.navlinks a, .mobile-menu a').forEach(function(a){
-      a.classList.toggle('active', a.getAttribute('data-nav')===name);
-    });
-    if(location.hash!=='#'+name){ history.replaceState(null,'','#'+name); }
-    window.scrollTo({top:0, behavior:'auto'});
-    runReveal();
+    document.querySelectorAll('.home-extra').forEach(function(e){ e.style.display=(name==='home')?'':'none'; });
+    document.querySelectorAll('.navlinks a, .mobile-menu a').forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-nav')===name); });
+    if(location.hash!=='#'+name) history.replaceState(null,'','#'+name);
+    window.scrollTo({top:0, behavior:'auto'}); runReveal();
   }
   document.addEventListener('click', function(e){
-    var t = e.target.closest('[data-nav]');
-    if(!t) return;
-    var n = t.getAttribute('data-nav');
-    if(n){ e.preventDefault(); closeMenu(); setActive(n); }
+    var t=e.target.closest('[data-nav]'); if(!t) return;
+    var n=t.getAttribute('data-nav'); if(!n) return;
+    e.preventDefault(); closeMenu(); setActive(n);
   });
   window.addEventListener('hashchange', function(){ setActive((location.hash||'#home').slice(1)); });
 
-  /* ---------- mobile menu ---------- */
-  var mm = document.getElementById('mobileMenu'), burger = document.getElementById('burger');
-  function closeMenu(){ mm.classList.remove('open'); document.body.classList.remove('menu-open'); }
-  burger.addEventListener('click', function(){ mm.classList.toggle('open'); document.body.classList.toggle('menu-open'); });
+  var mm=document.getElementById('mobileMenu'), scrim=document.getElementById('scrim');
+  function openMenu(){ mm.classList.add('open'); scrim.classList.add('show'); }
+  function closeMenu(){ mm.classList.remove('open'); scrim.classList.remove('show'); }
+  document.getElementById('burger').addEventListener('click', openMenu);
+  document.getElementById('mclose').addEventListener('click', closeMenu);
+  scrim.addEventListener('click', closeMenu);
 
-  /* ---------- header shadow ---------- */
-  var hdr = document.getElementById('hdr');
-  window.addEventListener('scroll', function(){ hdr.classList.toggle('scrolled', window.scrollY>8); }, {passive:true});
-
-  /* ---------- theme ---------- */
-  var root = document.documentElement;
-  document.getElementById('themeBtn').addEventListener('click', function(){
-    var cur = root.getAttribute('data-theme');
-    if(!cur){ cur = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'; }
-    root.setAttribute('data-theme', cur==='dark'?'light':'dark');
-  });
-
-  /* ---------- reveal on scroll ---------- */
-  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(en){
+  var io=('IntersectionObserver' in window)? new IntersectionObserver(function(en){
     en.forEach(function(x){ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target); } });
-  }, {threshold:.12, rootMargin:'0px 0px -40px 0px'}) : null;
-  function runReveal(){
-    document.querySelectorAll('.view.active .reveal:not(.in)').forEach(function(el){
-      if(io){ io.observe(el); } else { el.classList.add('in'); }
-    });
-  }
+  }, {threshold:.1, rootMargin:'0px 0px -40px 0px'}) : null;
+  function runReveal(){ document.querySelectorAll('.view.active .reveal:not(.in)').forEach(function(el){ io? io.observe(el): el.classList.add('in'); }); }
 
-  /* ---------- form validation ---------- */
   function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  function validPhone(v){ return (v.replace(/[^0-9]/g,'').length>=6); }
+  function validPhone(v){ return v.replace(/[^0-9]/g,'').length>=6; }
   function checkField(f){
-    var v = (f.value||'').trim(), ok = true;
+    var v=(f.value||'').trim(), ok=true;
     if(f.hasAttribute('required') && !v) ok=false;
     if(ok && v && f.getAttribute('data-type')==='email' && !validEmail(v)) ok=false;
     if(ok && v && f.getAttribute('data-type')==='phone' && !validPhone(v)) ok=false;
     if(f.tagName==='SELECT' && f.hasAttribute('required') && !f.value) ok=false;
-    f.classList.toggle('err', !ok);
-    return ok;
+    f.classList.toggle('err', !ok); return ok;
   }
-  function wireForm(formId, okId, boxId, msg){
-    var form = document.getElementById(formId);
-    if(!form) return;
+  function wireForm(formId, okId, msg){
+    var form=document.getElementById(formId); if(!form) return;
     form.querySelectorAll('.input').forEach(function(f){
       f.addEventListener('blur', function(){ if(f.classList.contains('err')) checkField(f); });
       f.addEventListener('input', function(){ if(f.classList.contains('err')) checkField(f); });
     });
     form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var ok = true;
+      e.preventDefault(); var ok=true;
       form.querySelectorAll('.input[required], .input[data-type]').forEach(function(f){ if(!checkField(f)) ok=false; });
       if(!ok){ var first=form.querySelector('.err'); if(first) first.focus(); return; }
-      form.style.display='none';
-      document.getElementById(okId).classList.add('show');
-      showToast(msg);
+      form.style.display='none'; document.getElementById(okId).classList.add('show'); showToast(msg);
     });
   }
-  wireForm('leadForm','leadOk','leadFormBox','Благодарим! Ще се свържем с вас скоро.');
-  wireForm('offerForm','offerOk',null,'Запитването е изпратено успешно!');
+  wireForm('leadForm','leadOk','Благодарим! Ще се свържем с вас скоро.');
+  wireForm('offerForm','offerOk','Запитването е изпратено успешно!');
+  var sel=document.getElementById('cargoSelect'), ow=document.getElementById('otherWrap');
+  if(sel) sel.addEventListener('change', function(){ ow.classList.toggle('show', sel.value==='other'); });
 
-  /* cargo "other" reveal */
-  var sel = document.getElementById('cargoSelect'), ow = document.getElementById('otherWrap');
-  if(sel){ sel.addEventListener('change', function(){ ow.classList.toggle('show', sel.value==='other'); }); }
-
-  /* ---------- toast ---------- */
-  var toast = document.getElementById('toast'), toastMsg=document.getElementById('toastMsg'), tt;
+  var toast=document.getElementById('toast'), toastMsg=document.getElementById('toastMsg'), tt;
   function showToast(m){ toastMsg.textContent=m; toast.classList.add('show'); clearTimeout(tt); tt=setTimeout(function(){ toast.classList.remove('show'); },4200); }
 
-  /* ---------- init ---------- */
-  document.getElementById('yr').textContent = '2026';
+  applyContent();
+  document.getElementById('yr').textContent='2026';
   setActive((location.hash||'#home').slice(1));
   runReveal();
 })();
