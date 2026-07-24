@@ -276,12 +276,11 @@ textarea.input{resize:vertical; min-height:100px}
 .tile{padding:22px}
 .tile b{font-size:2rem; font-weight:800; letter-spacing:-.02em; display:block; background:linear-gradient(120deg,var(--brand-2),var(--brand)); -webkit-background-clip:text; background-clip:text; color:transparent}
 .tile span{color:var(--slate); font-size:.9rem; font-weight:600}
-.values{display:grid; grid-template-columns:repeat(4,1fr); gap:20px}
+.values{display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
 .value{padding:24px}
 .value .vi{width:50px;height:50px;border-radius:14px; display:grid; place-items:center; margin-bottom:14px; color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand-2))}
-.value:nth-child(2) .vi{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
-.value:nth-child(3) .vi{background:linear-gradient(135deg,var(--brand-2),var(--brand-3))}
-.value:nth-child(4) .vi{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.value:nth-child(3n+2) .vi{background:linear-gradient(135deg,var(--charcoal-2),var(--charcoal))}
+.value:nth-child(3n+3) .vi{background:linear-gradient(135deg,var(--brand-2),var(--brand-3))}
 .value h4{font-size:1.06rem; margin-bottom:.35rem}
 .value p{color:var(--slate); font-size:.92rem}
 
@@ -355,6 +354,21 @@ footer{margin-top:40px; padding:56px 0 28px}
   background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); box-shadow:var(--shadow); color:var(--ink)}
 .toast.show{transform:translate(-50%,0)}
 .toast svg{width:20px;height:20px; color:#1BB673}
+
+/* floating call button */
+.fab-call{position:fixed; right:20px; bottom:20px; z-index:120; width:60px; height:60px; border-radius:50%; display:grid; place-items:center; color:#fff;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2)); box-shadow:0 16px 32px -10px rgba(242,106,15,.85); transition:transform .2s var(--ease)}
+.fab-call:hover{transform:scale(1.08)}
+.fab-call svg{width:26px;height:26px}
+.fab-call::before{content:""; position:absolute; inset:0; border-radius:50%; background:var(--brand); z-index:-1; animation:fabpulse 2.4s ease-out infinite}
+@keyframes fabpulse{0%{transform:scale(1);opacity:.55}70%{transform:scale(1.7);opacity:0}100%{opacity:0}}
+@media (max-width:480px){.fab-call{width:54px;height:54px;right:16px;bottom:16px}}
+
+/* transport type chips */
+.svc-types{display:flex; flex-wrap:wrap; gap:10px}
+.svc-types span{display:inline-flex; align-items:center; gap:.5em; padding:.55em 1em; border-radius:12px; font-weight:600; font-size:.92rem; color:var(--ink-2);
+  background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd)}
+.svc-types span svg{width:15px;height:15px; color:var(--brand-2)}
 
 /* ============================ RESPONSIVE ============================ */
 @media (max-width:980px){
@@ -577,9 +591,9 @@ footer{margin-top:40px; padding:56px 0 28px}
       <div class="about-copy">
         <span class="eyebrow">За нас</span>
         <h1 style="font-size:var(--fs-h2);margin:.6rem 0 1.1rem">Превоз на товари от и за Европа</h1>
-        <p class="muted" style="font-size:1.08rem">От малки колети до големи товарни пратки, ние разполагаме с експертизата и ресурсите, за да се справим с всички ваши транспортни изисквания с прецизност и грижа.</p>
-        <p class="muted">Разполагаме със значителен брой собствени и наети бордови камиони, подходящи за превоз на палети, машини, топове плат, кашони, каси и дървени щайги — с товароносимост до 24 тона. За чувствителни товари предлагаме хладилни превози с температурен режим от -25°C до +25°C.</p>
-        <p class="muted">Освен транспорт, предлагаме и модерни складови бази, стратегически разположени за лесен достъп и ефективна дистрибуция на стоките. Защото за нас вашия товар е наша грижа.</p>
+        <p class="muted" style="font-size:1.08rem">Добре дошли в Global Cargo Sped — вашият надежден партньор в транспортните решения. С богат опит и страст към върхови постижения, ние сме посветени на предоставянето на първокласни спедиторски услуги, за да отговорим на всички ваши нужди за транспорт на товари.</p>
+        <p class="muted">Разбираме значението на навременния и сигурен транспорт. Затова се гордеем с нашия екип от квалифицирани професионалисти, които се ангажират вашите стоки да достигнат до местоназначението си ефективно и безопасно.</p>
+        <p class="muted">От малки колети до големи товарни пратки, разполагаме с експертизата и ресурсите да се справим с всички ваши транспортни изисквания с прецизност и грижа. Нашият основен приоритет е удовлетвореността на клиентите — защото вашия товар е наша грижа.</p>
       </div>
       <div class="stat-tiles">
         <div class="glass tile reveal"><b class="tnum">15+</b><span>Години опит</span></div>
@@ -598,12 +612,14 @@ footer{margin-top:40px; padding:56px 0 28px}
   </div>
 
   <div class="wrap" style="margin-top:clamp(54px,7vw,88px)">
-    <div class="section-head center reveal"><span class="eyebrow">Нашите ценности</span><h2 style="font-size:var(--fs-h2)">Какво ни отличава</h2></div>
+    <div class="section-head center reveal"><span class="eyebrow">Нашите ценности</span><h2 style="font-size:var(--fs-h2)">Ценностите, които ни дават сили</h2></div>
     <div class="values">
-      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Надеждност</h4><p>Спазваме сроковете и поетите ангажименти при всеки курс.</p></div>
-      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg></div><h4>Скорост</h4><p>Бърза реакция на запитвания и оптимизирани маршрути.</p></div>
-      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><h4>Прозрачност</h4><p>Ясни цени и условия — без изненади и скрити такси.</p></div>
-      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21l8.84-8.61a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h4>Грижа</h4><p>Отношение към всеки товар, сякаш е наш собствен.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Отговорност</h4><p>Поемаме ангажимент към всеки товар и го изпълняваме докрай.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></div><h4>Коректност</h4><p>Честни условия и коректно отношение към всеки клиент.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-3 7 3"/><path d="M5 8l-2 6a4 4 0 0 0 8 0zM19 8l-2 6a4 4 0 0 0 8 0z"/></svg></div><h4>Честност</h4><p>Прозрачност във всяка стъпка от процеса.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21l8.84-8.61a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h4>Добронамереност</h4><p>Отношение и грижа, както към собствена стока.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h4>Откритост</h4><p>Ясна комуникация и достъпност по всяко време.</p></div>
+      <div class="glass value reveal"><div class="vi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></div><h4>Професионализъм</h4><p>Екип от квалифицирани специалисти с дългогодишен опит.</p></div>
     </div>
   </div>
   <div class="wrap" style="margin-top:clamp(54px,7vw,88px)"><div class="cta-banner reveal"><div class="in">
@@ -617,6 +633,11 @@ footer{margin-top:40px; padding:56px 0 28px}
   <div class="wrap">
     <div class="section-head reveal"><span class="eyebrow">Услуги</span><h1 style="font-size:var(--fs-h2);margin:.6rem 0 .7rem">Пълен набор от услуги</h1><p>Изберете услугата, която ви е нужна — или ни оставете да съставим цялостно решение за вашия товар.</p></div>
     <div class="grid g3" id="svcFull"></div>
+
+    <div class="reveal" style="margin-top:46px">
+      <div class="section-head" style="margin-bottom:22px;max-width:none"><span class="eyebrow">Видове превози</span><h2 style="font-size:var(--fs-h3);margin-top:.4rem">Превозваме почти всякакъв товар</h2></div>
+      <div class="svc-types"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на товари от и за Европа</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на товари в България</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Групажни превози</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Експресни превози с бусове</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Хладилни превози</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на извънгабаритни товари</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на аграрна техника</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на опасни товари (АДР)</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на цветни и черни метали с гондоли</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на семена и насипни товари</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Специализиран транспорт на лекарства</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Транспорт от и за Украйна и извън ЕС</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на контейнери</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Превоз на лични вещи</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Цистерни</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Соло камиони</span></div>
+    </div>
     <div class="glass reveal" style="margin-top:40px;padding:28px;display:flex;justify-content:space-between;align-items:center;gap:22px;flex-wrap:wrap">
       <div><h3 style="font-size:var(--fs-h3);margin-bottom:.3rem">Не сте сигурни коя услуга ви трябва?</h3><p class="muted">Нашите служители са винаги на разположение да ви обърнат внимание — безплатна консултация.</p></div>
       <a class="btn btn-dark btn-lg" data-nav="offer">Поискай безплатна консултация</a>
@@ -645,7 +666,8 @@ footer{margin-top:40px; padding:56px 0 28px}
       <p class="lead">Изпратете запитване или се свържете с нас за оферта. Попълнете детайлите за товара и маршрута — ще ви отговорим възможно най-бързо.</p>
       <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span><div><small>Телефон</small><b><a class="js-phone js-phone-link" href="tel:+359877415141">0877 415 141</a></b></div></div>
       <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg></span><div><small>Имейл</small><b><a class="js-email" href="mailto:gcargosped@gmail.com">gcargosped@gmail.com</a></b></div></div>
-      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><div><small>Работно време</small><b>Пон – Пет · 09:00 – 18:00</b></div></div>
+      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span><div><small>Адрес</small><b>Пловдив, ул. Ламартин 2</b></div></div>
+      <div class="contact-line"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 2"/></svg></span><div><small>Работно време</small><b>Пон – Пет · 09:00 – 18:00</b></div></div>
     </div>
 
     <div class="glass offer-form">
@@ -701,7 +723,7 @@ footer{margin-top:40px; padding:56px 0 28px}
       <div class="foot"><h5>Контакти</h5><ul>
         <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg><a class="js-phone js-phone-link" href="tel:+359877415141">0877 415 141</a></li>
         <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg><a class="js-email" href="mailto:gcargosped@gmail.com">gcargosped@gmail.com</a></li>
-        <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>София, България</span></li>
+        <li class="ct"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span>Пловдив, ул. Ламартин 2</span></li>
       </ul></div>
     </div>
     <div class="foot-bottom">
@@ -715,6 +737,7 @@ footer{margin-top:40px; padding:56px 0 28px}
   </div></div>
 </footer>
 
+<a class="fab-call js-phone-link" href="tel:+359877415141" aria-label="Обади се сега"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
 <div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg><span id="toastMsg">Готово</span></div>
 
 <script>
@@ -750,16 +773,18 @@ footer{margin-top:40px; padding:56px 0 28px}
   }
 
   var SERVICES = [
-    {t:"Сухопътен транспорт", d:"Пътуваме в цяла Европа, Турция и вътрешно в България — бордови камиони до 24 тона за палети, машини, кашони и каси.",
+    {t:"Сухопътен транспорт", d:"Бордови коли до 24 тона, фургони, бусове, хладилни, соло камиони, извънгабаритни, цистерни, гондоли и АДР — из България, Европа и Турция.",
       ic:'<path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'},
-    {t:"Хладилни превози", d:"Транспорт с контролирана температура от -25°C до +25°C за храни и чувствителни към температура товари.",
+    {t:"Хладилни превози", d:"Транспорт с контролирана температура от -25\u00b0C до +25\u00b0C — хладилни ремаркета, соло камиони и бусове.",
       ic:'<path d="M12 2v20M4.5 7l15 10M19.5 7l-15 10M2 12h20"/>'},
     {t:"Групажни превози", d:"Комбиниране на по-малки пратки в един курс (LTL) за по-ефективна цена — както и цели камиони (FTL).",
       ic:'<rect x="3" y="8" width="8" height="8" rx="1"/><rect x="13" y="4" width="8" height="6" rx="1"/><rect x="13" y="12" width="8" height="8" rx="1"/>'},
-    {t:"Експресни превози с бусове", d:"Бързи доставки с бусове за спешни и по-малки товари — когато времето е от значение.",
+    {t:"Експресни превози с бусове", d:"Бързи доставки с бусове за спешни и по-малки товари — от няколко часа до 48 ч. до крайна точка в Европа.",
       ic:'<path d="M3 5h11v11H3z"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="17.5" cy="18" r="2"/>'},
-    {t:"Складиране и логистика", d:"Складовете ни са стратегически разположени за лесен достъп и ефективна дистрибуция на стоките.",
+    {t:"Складиране и логистика", d:"Съвременни складови бази, стратегически разположени за лесен достъп и ефективна дистрибуция на стоките.",
       ic:'<path d="M3 21V8l9-5 9 5v13"/><path d="M3 21h18M9 21v-6h6v6"/>'},
+    {t:"Застраховане на товари", d:"Допълнителна карго застраховка, която осигурява защита от рисковете, на които е изложен товарът по време на транспорта.",
+      ic:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'},
     {t:"Безплатна консултация", d:"Нашите служители са винаги на разположение да ви обърнат внимание и да ви насочат към най-доброто решение.",
       ic:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'}
   ];
