@@ -35,6 +35,7 @@
   --radius:22px;
   --radius-sm:14px;
   --maxw:1180px;
+  --navh:86px;
   --ease:cubic-bezier(.22,.61,.36,1);
 
   --fs-display:clamp(2.35rem,1.1rem+4.9vw,4.5rem);
@@ -98,7 +99,7 @@ p{margin:0}
 /* ============================ HEADER ============================ */
 header{position:sticky; top:0; z-index:60; padding:12px 0}
 .navbar{display:flex; align-items:center; gap:18px; height:62px; padding:0 14px 0 18px; border-radius:18px;
-  background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
+  background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur);
   border:1px solid var(--glass-brd); box-shadow:var(--shadow-sm)}
 .brand{display:flex; align-items:center; gap:.7rem; font-weight:800; letter-spacing:-.02em; font-size:1.08rem; cursor:pointer}
 .logo{width:42px;height:42px;border-radius:12px; flex:0 0 auto; position:relative; display:grid; place-items:center;
@@ -145,13 +146,13 @@ section{padding:clamp(54px,7vw,100px) 0}
 .center .eyebrow{justify-content:center}
 
 /* ============================ HERO ============================ */
-.hero{position:relative; overflow:hidden; padding:0}
+.hero{position:relative; overflow:hidden; padding:0; margin-top:calc(-1 * var(--navh))}
 .hero-media{position:absolute; inset:0; z-index:0}
 .hero-media .hero-bgimg,.hero-media .hero-video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
 .hero-media .hero-bgimg{z-index:0}
 .hero-media .hero-video{z-index:1}
 .hero-scrim{position:absolute; inset:0; z-index:2; background:linear-gradient(90deg, rgba(255,247,239,.97) 0%, rgba(255,247,239,.88) 34%, rgba(255,247,239,.5) 60%, rgba(255,246,238,.2) 100%)}
-.hero-inner{position:relative; z-index:3; padding:clamp(34px,5vw,72px) 0 clamp(48px,6vw,90px)}
+.hero-inner{position:relative; z-index:3; padding:calc(var(--navh) + clamp(26px,4vw,54px)) 0 clamp(48px,6vw,90px)}
 .hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:44px; align-items:center}
 .hero-badge{display:inline-flex; align-items:center; gap:.5em; padding:.42em .9em; border-radius:999px; font-size:.8rem; font-weight:700;
   background:var(--glass-strong); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); color:var(--ink-2); box-shadow:var(--shadow-sm)}
@@ -260,9 +261,13 @@ textarea.input{resize:vertical; min-height:100px}
 .partners{display:flex; flex-wrap:wrap; gap:12px; justify-content:center}
 .partner{padding:.7em 1.3em; border-radius:999px; font-weight:800; letter-spacing:.02em; color:var(--ink-2); font-size:1.02rem;
   background:var(--glass); backdrop-filter:var(--blur); -webkit-backdrop-filter:var(--blur); border:1px solid var(--glass-brd); box-shadow:var(--shadow-sm)}
-.partner-logos{display:flex; flex-wrap:wrap; gap:16px 30px; justify-content:center; align-items:center}
-.partner-logos img{height:46px; width:auto; max-width:150px; object-fit:contain; filter:grayscale(1); opacity:.72; transition:.25s}
-.partner-logos img:hover{filter:none; opacity:1; transform:translateY(-2px)}
+.marquee{overflow:hidden; position:relative; -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent); mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.marquee-track{display:flex; align-items:center; gap:64px; width:max-content; animation:marq 34s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track img{height:70px; width:auto; object-fit:contain; filter:grayscale(1); opacity:.7; transition:filter .25s, opacity .25s; flex:0 0 auto}
+.marquee-track img:hover{filter:none; opacity:1}
+@keyframes marq{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+@media (max-width:560px){.marquee-track img{height:54px} .marquee-track{gap:44px}}
 
 /* real photos with graceful fallback (external images load on a real host; in the sandbox the fallback shows) */
 .logo .logo-img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff; border-radius:inherit; z-index:2}
@@ -580,7 +585,7 @@ footer{margin-top:40px; padding:56px 0 28px}
   <section style="padding-top:0">
     <div class="wrap">
       <div class="section-head center reveal"><span class="eyebrow">Нашите партньори</span><h2>Компании, които ни се довериха</h2></div>
-      <div class="partner-logos reveal" id="partnersBox"></div>
+      <div class="marquee reveal"><div class="marquee-track" id="partnersBox"></div></div>
     </div>
   </section>
 
@@ -834,15 +839,15 @@ footer{margin-top:40px; padding:56px 0 28px}
   ];
   var pbox=document.getElementById('partnersBox');
   if(pbox){
-    PARTNERS.forEach(function(p){
-      var img=document.createElement('img');
-      img.src=p.d; img.alt=p.n||'Партньор'; img.loading='lazy';
-      img.addEventListener('error', function(){
-        if(p.n){ var s=document.createElement('span'); s.className='partner'; s.textContent=p.n; img.replaceWith(s); }
-        else { img.remove(); }
+    function addLogos(hidden){
+      PARTNERS.forEach(function(p){
+        var img=document.createElement('img');
+        img.src=p.d; img.alt=hidden?'':(p.n||'Партньор');
+        if(hidden) img.setAttribute('aria-hidden','true');
+        pbox.appendChild(img);
       });
-      pbox.appendChild(img);
-    });
+    }
+    addLogos(false); addLogos(true); /* duplicate for seamless loop */
   }
 
   var views=['home','about','services','blog','offer'];
