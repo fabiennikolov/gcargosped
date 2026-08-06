@@ -714,8 +714,7 @@ footer{margin-top:40px; padding:56px 0 28px}
 </section>
 
 <!-- ============ SERVICE DETAIL ============ -->
-<section class="view" id="view-service" data-view="service">
-  <div class="service-hero">
+<section class="view service-hero" id="view-service" data-view="service">
     <div class="service-hero-media" id="svMedia" aria-hidden="true"><img id="svImg" alt="" /></div>
     <div class="service-hero-inner"><div class="wrap service-hero-grid">
       <div class="service-hero-copy">
@@ -742,7 +741,9 @@ footer{margin-top:40px; padding:56px 0 28px}
         <div class="form-ok" id="svcPageOk"><div class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><h3>Благодарим!</h3><p class="muted" style="font-size:.92rem">Получихме запитването ви и ще се свържем съвсем скоро.</p></div>
       </div>
     </div></div>
-  </div>
+</section>
+
+<div class="service-extra">
   <div class="wrap service-body">
     <div class="service-rich" id="svBody"></div>
     <div id="svRelatedWrap" style="display:none; margin-top:clamp(40px,5vw,60px)">
@@ -755,7 +756,7 @@ footer{margin-top:40px; padding:56px 0 28px}
     </div>
   </div>
   <div class="wrap" style="padding-bottom:clamp(44px,5vw,80px)"><div class="cta-banner reveal"><div class="in"><h2>Поискайте оферта още днес</h2><p>Свържете се с нас за оферта, съобразена с вашия товар и маршрут.</p><div class="btns"><a class="btn btn-accent btn-lg" data-nav="offer">Поискай оферта</a><a class="btn btn-glass btn-lg js-phone-link" href="tel:+359877415141" style="color:#fff;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)"><span class="js-phone">0877 415 141</span></a></div></div></div></div>
-</section>
+</div>
 
 <!-- ============ BLOG ============ -->
 <section class="view" id="view-blog" data-view="blog">
@@ -965,6 +966,7 @@ footer{margin-top:40px; padding:56px 0 28px}
     if(views.indexOf(name)<0) name='home';
     document.querySelectorAll('.view').forEach(function(v){ v.classList.toggle('active', v.getAttribute('data-view')===name); });
     document.querySelectorAll('.home-extra').forEach(function(e){ e.style.display=(name==='home')?'':'none'; });
+    document.querySelectorAll('.service-extra').forEach(function(e){ e.style.display=(name==='service')?'':'none'; });
     var navName=(name==='service')?'services':name;
     document.querySelectorAll('.navlinks a, .mobile-menu a').forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-nav')===navName); });
     var hash=slug?('usluga/'+slug):name;
