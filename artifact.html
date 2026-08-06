@@ -405,6 +405,18 @@ footer{margin-top:40px; padding:56px 0 28px}
 .service-rich p{color:var(--ink-2); margin-bottom:1rem; font-size:1.06rem; line-height:1.75; max-width:80ch}
 .sv-others{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
 @media (max-width:900px){.service-hero-grid{grid-template-columns:1fr; gap:28px} .sv-others{grid-template-columns:1fr}}
+.subphoto-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+.subphoto{position:relative; border-radius:18px; overflow:hidden; aspect-ratio:4/3.1; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .3s var(--ease), box-shadow .3s}
+.subphoto:hover{transform:translateY(-5px); box-shadow:var(--shadow)}
+.subphoto img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .5s var(--ease)}
+.subphoto:hover img{transform:scale(1.06)}
+.subphoto::after{content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,20,15,0) 40%, rgba(8,18,14,.82) 100%)}
+.subphoto h3{position:absolute; left:16px; right:16px; bottom:14px; z-index:2; color:#fff; font-size:1.02rem; line-height:1.28; margin:0}
+.subphoto .go{position:absolute; right:14px; bottom:14px; z-index:2; width:30px;height:30px;border-radius:50%; background:rgba(255,255,255,.94); color:var(--brand-2); display:grid; place-items:center; opacity:0; transform:translateX(-6px); transition:.25s}
+.subphoto:hover .go{opacity:1; transform:none}
+.subphoto .go svg{width:15px;height:15px}
+@media (max-width:900px){.subphoto-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.subphoto-grid{grid-template-columns:1fr}}
 
 /* ============================ RESPONSIVE ============================ */
 @media (max-width:980px){
@@ -714,6 +726,10 @@ footer{margin-top:40px; padding:56px 0 28px}
   </div>
   <div class="wrap service-body">
     <div class="service-rich" id="svBody"></div>
+    <div id="svRelatedWrap" style="display:none; margin-top:clamp(40px,5vw,60px)">
+      <div class="section-head" style="margin-bottom:22px;max-width:none"><span class="eyebrow">Видове превози</span><h2 style="font-size:var(--fs-h3);margin-top:.3rem">Разгледайте всички видове превоз</h2></div>
+      <div class="subphoto-grid" id="svRelated"></div>
+    </div>
     <div style="margin-top:clamp(40px,5vw,60px)">
       <div class="section-head" style="margin-bottom:22px;max-width:none"><span class="eyebrow">Още услуги</span><h2 style="font-size:var(--fs-h3);margin-top:.3rem">Другите ни услуги</h2></div>
       <div class="sv-others" id="svOthers"></div>
@@ -878,10 +894,23 @@ footer{margin-top:40px; padding:56px 0 28px}
     img.src='assets/img/services/'+slug+'.webp';
     var html=''; p.body.split('\n').forEach(function(l){ l=l.trim(); if(!l) return; if(l.indexOf('## ')===0) html+='<h2>'+esc(l.slice(3))+'</h2>'; else html+='<p>'+esc(l)+'</p>'; });
     document.getElementById('svBody').innerHTML=html;
-    var others=Object.keys(SERVICE_PAGES).filter(function(k){return k!==slug && k!=='bezplatna-konsultacia';});
-    var start=Object.keys(SERVICE_PAGES).indexOf(slug); var pick=[]; for(var i=1;i<=3;i++){ pick.push(others[(start+i)%others.length]); }
-    document.getElementById('svOthers').innerHTML=pick.map(function(k){ var q=SERVICE_PAGES[k]; return '<article class="glass subcard reveal" data-nav="usluga/'+k+'"><h3>'+esc(q.title)+'</h3><p>'+esc((q.sub||'').slice(0,96))+'</p><span class="more" style="color:var(--brand-2);font-weight:700;font-size:.86rem">Виж услугата →</span></article>'; }).join('');
+    var relWrap=document.getElementById('svRelatedWrap'), relBox=document.getElementById('svRelated');
+    if(slug==='suhopten-transport' && typeof SUBSERVICES!=='undefined'){
+      relWrap.style.display='';
+      relBox.innerHTML=SUBSERVICES.map(function(s){
+        var sp=SERVICE_PAGES[s.slug];
+        return '<article class="subphoto reveal" data-nav="usluga/'+s.slug+'"><img src="assets/img/services/'+s.slug+'.webp" alt="'+esc(s.t)+'" loading="lazy" decoding="async" onerror="this.style.display=\'none\';this.parentElement.style.background=\'linear-gradient(135deg,var(--brand),var(--brand-3))\'" /><h3>'+esc(s.t)+'</h3><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></article>';
+      }).join('');
+      var mainOthers=['bezplatna-konsultacia','skladirane-i-logistika'];
+      document.getElementById('svOthers').innerHTML=mainOthers.map(function(k){ var q=SERVICE_PAGES[k]; return '<article class="glass subcard reveal" data-nav="usluga/'+k+'"><h3>'+esc(q.title)+'</h3><p>'+esc((q.sub||'').slice(0,96))+'</p><span class="more" style="color:var(--brand-2);font-weight:700;font-size:.86rem">Виж услугата →</span></article>'; }).join('');
+    } else {
+      relWrap.style.display='none'; relBox.innerHTML='';
+      var others=Object.keys(SERVICE_PAGES).filter(function(k){return k!==slug && k!=='bezplatna-konsultacia';});
+      var start=Object.keys(SERVICE_PAGES).indexOf(slug); var pick=[]; for(var i=1;i<=3;i++){ pick.push(others[(start+i)%others.length]); }
+      document.getElementById('svOthers').innerHTML=pick.map(function(k){ var q=SERVICE_PAGES[k]; return '<article class="glass subcard reveal" data-nav="usluga/'+k+'"><h3>'+esc(q.title)+'</h3><p>'+esc((q.sub||'').slice(0,96))+'</p><span class="more" style="color:var(--brand-2);font-weight:700;font-size:.86rem">Виж услугата →</span></article>'; }).join('');
+    }
     document.title=p.title+' — Глобал Карго Спед';
+    runReveal();
   }
 
   function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
