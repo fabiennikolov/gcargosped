@@ -410,7 +410,7 @@ footer{margin-top:40px; padding:56px 0 28px}
 .service-hero{position:relative; overflow:hidden; margin-top:calc(-1 * var(--navh)); min-height:clamp(540px,78vh,840px)}
 .service-hero-media{position:absolute; inset:0; z-index:0}
 .service-hero-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
-.service-hero-media::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(238,251,244,.62), rgba(238,251,244,.4) 32%, rgba(238,251,244,.14) 58%, rgba(238,251,244,0) 82%)}
+.service-hero-media::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(10,18,14,.22), rgba(10,18,14,.08) 30%, rgba(10,18,14,0) 55%)}
 .service-hero-media.noimg{background:linear-gradient(135deg,var(--brand),var(--brand-3))}
 .service-hero-media.noimg img{display:none}
 .service-hero-media.noimg::after{background:linear-gradient(90deg, rgba(238,251,244,.5), rgba(238,251,244,.15))}
@@ -418,8 +418,15 @@ footer{margin-top:40px; padding:56px 0 28px}
 .service-hero-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:40px; align-items:center}
 .sv-back{display:inline-flex; align-items:center; gap:.4em; color:var(--brand-2); font-weight:700; font-size:.9rem; cursor:pointer; margin-bottom:12px}
 .sv-back svg{width:18px;height:18px}
-.service-hero-copy h1{font-size:clamp(1.9rem,1.2rem+2.4vw,3rem); margin:.4rem 0 .8rem}
-.service-hero-copy .lead{font-size:1.12rem; color:var(--ink-2); max-width:46ch; margin-bottom:1.5rem}
+.service-hero-copy{background:rgba(8,16,13,.52); backdrop-filter:blur(16px) saturate(1.3); -webkit-backdrop-filter:blur(16px) saturate(1.3); border:1px solid rgba(255,255,255,.14); border-radius:24px; padding:clamp(22px,3vw,36px); box-shadow:0 24px 60px -26px rgba(0,0,0,.55); max-width:600px}
+.service-hero-copy .eyebrow{color:#8DEBBB}
+.service-hero-copy .eyebrow::before{background:var(--brand)}
+.service-hero-copy .sv-back{color:#fff; opacity:.82}
+.service-hero-copy .sv-back:hover{opacity:1; color:#fff}
+.service-hero-copy h1{color:#fff; font-size:clamp(1.9rem,1.2rem+2.4vw,3rem); margin:.4rem 0 .8rem}
+.service-hero-copy .lead{font-size:1.12rem; color:rgba(255,255,255,.88); max-width:46ch; margin-bottom:1.5rem}
+.service-hero-copy .btn-glass{background:rgba(255,255,255,.14); color:#fff; border-color:rgba(255,255,255,.32)}
+.service-hero-copy .btn-glass:hover{background:rgba(255,255,255,.24); color:#fff; border-color:rgba(255,255,255,.5)}
 .service-hero-form{padding:24px}
 .service-hero-form h3{font-size:1.1rem; margin-bottom:2px}
 .service-body{padding:clamp(40px,5vw,74px) 0}
