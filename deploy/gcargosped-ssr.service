@@ -1,0 +1,17 @@
+[Unit]
+Description=Inertia SSR renderer for gcargosped
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/gcargosped-app
+ExecStart=/usr/bin/php artisan inertia:start-ssr
+Restart=always
+RestartSec=3
+StandardOutput=append:/var/log/gcargosped-ssr.log
+StandardError=append:/var/log/gcargosped-ssr.log
+
+[Install]
+WantedBy=multi-user.target
