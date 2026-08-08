@@ -1,6 +1,6 @@
-import { Link, usePage } from '@inertiajs/react';
 import SiteLayout from '@/layouts/site-layout';
 import type { PageMeta, SharedSiteProps } from '@/types/site';
+import { Link, usePage } from '@inertiajs/react';
 
 interface Props {
     meta: PageMeta;
@@ -79,30 +79,26 @@ export default function About({ meta }: Props) {
                     <div className="about-hero">
                         <div className="about-copy">
                             <span className="eyebrow">За нас</span>
-                            <h1 style={{ fontSize: 'var(--fs-h2)', margin: '.6rem 0 1.1rem' }}>
-                                „Вашият товар е наша грижа.“
-                            </h1>
+                            <h1 style={{ fontSize: 'var(--fs-h2)', margin: '.6rem 0 1.1rem' }}>„Вашият товар е наша грижа.“</h1>
                             <p className="muted" style={{ fontSize: '1.08rem' }}>
                                 Това не е просто нашето мото. Това е обещание към всеки клиент, който ни се доверява.
                             </p>
                             <p className="muted">
-                                В GLOBAL CARGO SPED вярваме, че зад всяка пратка стоят нечий бизнес, време, усилия и
-                                отговорност. Затова подхождаме към всеки превоз с професионализъм, прецизност и лично
-                                отношение, независимо от неговия размер или дестинация.
+                                В GLOBAL CARGO SPED вярваме, че зад всяка пратка стоят нечий бизнес, време, усилия и отговорност. Затова подхождаме
+                                към всеки превоз с професионализъм, прецизност и лично отношение, независимо от неговия размер или дестинация.
                             </p>
                             <p className="muted">
-                                Ние предлагаме надеждни решения за международен автомобилен транспорт и логистика в цяла
-                                Европа. Благодарение на дългогодишния ни опит, широка мрежа от доказани партньори и
-                                индивидуален подход към всеки клиент, гарантираме сигурност, точност и ефективност на
-                                всяка доставка.
+                                Ние предлагаме надеждни решения за международен автомобилен транспорт и логистика в цяла Европа. Благодарение на
+                                дългогодишния ни опит, широка мрежа от доказани партньори и индивидуален подход към всеки клиент, гарантираме
+                                сигурност, точност и ефективност на всяка доставка.
                             </p>
                             <p className="muted">
-                                Нашата мисия е да осигурим спокойствие на клиентите си, като поемем цялостната
-                                организация на транспорта – от първата заявка до успешното разтоварване.
+                                Нашата мисия е да осигурим спокойствие на клиентите си, като поемем цялостната организация на транспорта – от първата
+                                заявка до успешното разтоварване.
                             </p>
                             <p className="muted">
-                                За нас коректността не е предимство – тя е стандарт. Доверието не се обещава – то се
-                                изгражда с всяка успешно изпълнена доставка.
+                                За нас коректността не е предимство – тя е стандарт. Доверието не се обещава – то се изгражда с всяка успешно
+                                изпълнена доставка.
                             </p>
                             <p style={{ fontWeight: 700, color: 'var(--ink)', fontSize: '1.08rem' }}>
                                 GLOBAL CARGO SPED – Вашият надежден партньор в международния транспорт и логистиката.
@@ -122,7 +118,7 @@ export default function About({ meta }: Props) {
                     </div>
                 </div>
 
-                <div className="wrap" style={{ marginTop: 'clamp(40px,5vw,64px)' }}>
+                <div className="wrap stack-y-sm">
                     <div className="glass photo-band reveal">
                         <img
                             className="photo"
@@ -135,7 +131,7 @@ export default function About({ meta }: Props) {
                     </div>
                 </div>
 
-                <div className="wrap" style={{ marginTop: 'clamp(54px,7vw,88px)' }}>
+                <div className="wrap stack-y">
                     <div className="section-head center reveal">
                         <span className="eyebrow">Нашите ценности</span>
                         <h2 style={{ fontSize: 'var(--fs-h2)' }}>Ценностите, които ни дават сили</h2>
@@ -163,7 +159,7 @@ export default function About({ meta }: Props) {
                     </div>
                 </div>
 
-                <div className="wrap" style={{ marginTop: 'clamp(54px,7vw,88px)' }}>
+                <div className="wrap stack-y">
                     <div className="cta-banner reveal">
                         <div className="in">
                             <h2>Нека поемем вашата логистика</h2>

@@ -1,10 +1,10 @@
-import { Link, usePage } from '@inertiajs/react';
 import { ArrowIcon, CheckIcon } from '@/components/site/icons';
 import InquiryForm from '@/components/site/inquiry-form';
 import PartnerGrid from '@/components/site/partner-grid';
 import ServiceCarousel from '@/components/site/service-carousel';
 import SiteLayout from '@/layouts/site-layout';
 import type { PageMeta, Partner, ServiceCard, SharedSiteProps } from '@/types/site';
+import { Link, usePage } from '@inertiajs/react';
 
 interface Props {
     services: { data: ServiceCard[] } | ServiceCard[];
@@ -60,7 +60,7 @@ export default function Home({ services, partners, meta }: Props) {
 
                 <div className="hero-inner">
                     <div className="wrap hero-grid">
-                        <div>
+                        <div className="hero-copy">
                             <span className="hero-badge">
                                 <span className="dot" /> На линия за нови запитвания
                             </span>
@@ -77,30 +77,23 @@ export default function Home({ services, partners, meta }: Props) {
                                     Нашите услуги
                                 </Link>
                             </div>
-
-                            <div className="hero-trust">
-                                {TRUST.map((item) => (
-                                    <span className="chip" key={item}>
-                                        <CheckIcon /> {item}
-                                    </span>
-                                ))}
-                            </div>
                         </div>
 
                         <div className="hero-visual">
                             <div className="glass hero-card">
                                 <InquiryForm source="offer" variant="lead" />
                             </div>
+                        </div>
 
-                            <div className="hero-float">
-                                <span className="hi">
-                                    <CheckIcon />
+                        {/* A sibling of the form rather than a child of the copy so that the
+                            single-column mobile layout can place it after the form. Desktop
+                            grid placement puts it back under the copy. */}
+                        <div className="hero-trust">
+                            {TRUST.map((item) => (
+                                <span className="chip" key={item}>
+                                    <CheckIcon /> {item}
                                 </span>
-                                <div>
-                                    <b>200+</b>
-                                    <span>доволни клиенти</span>
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -111,17 +104,14 @@ export default function Home({ services, partners, meta }: Props) {
                     <div className="section-head reveal">
                         <span className="eyebrow">Нашите услуги</span>
                         <h2>Пълен набор от услуги</h2>
-                        <p>
-                            От малки колети до големи товарни пратки — разполагаме с експертизата и ресурсите за всяко
-                            ваше транспортно изискване.
-                        </p>
+                        <p>От малки колети до големи товарни пратки — разполагаме с експертизата и ресурсите за всяко ваше транспортно изискване.</p>
                     </div>
                 </div>
 
                 <ServiceCarousel services={all} />
 
                 <div className="wrap">
-                    <div style={{ textAlign: 'center', marginTop: 32 }} className="reveal">
+                    <div className="section-cta reveal">
                         <Link className="btn btn-glass btn-lg" href="/services">
                             Виж всички услуги <ArrowIcon />
                         </Link>
@@ -129,7 +119,7 @@ export default function Home({ services, partners, meta }: Props) {
                 </div>
             </section>
 
-            <section style={{ paddingTop: 0 }}>
+            <section className="section-tight">
                 <div className="wrap">
                     <div className="band reveal">
                         <div className="inner">
@@ -147,7 +137,7 @@ export default function Home({ services, partners, meta }: Props) {
                 </div>
             </section>
 
-            <section style={{ paddingTop: 0 }}>
+            <section className="section-tight">
                 <div className="wrap coverage">
                     <div className="glass map-lg reveal">
                         <div className="map-frame">
@@ -182,8 +172,8 @@ export default function Home({ services, partners, meta }: Props) {
                             Превоз на товари от и за Европа
                         </h2>
                         <p className="muted reveal" style={{ marginBottom: '1.4rem' }}>
-                            От малки колети до големи товарни пратки, ние разполагаме с експертизата и ресурсите, за да
-                            се справим с всички ваши транспортни изисквания с прецизност и грижа.
+                            От малки колети до големи товарни пратки, ние разполагаме с експертизата и ресурсите, за да се справим с всички ваши
+                            транспортни изисквания с прецизност и грижа.
                         </p>
 
                         <div className="region-list">
@@ -201,7 +191,7 @@ export default function Home({ services, partners, meta }: Props) {
                 </div>
             </section>
 
-            <section style={{ paddingTop: 0 }}>
+            <section className="section-tight">
                 <div className="wrap">
                     <div className="section-head center reveal">
                         <span className="eyebrow">Как работим</span>
@@ -219,7 +209,7 @@ export default function Home({ services, partners, meta }: Props) {
                 </div>
             </section>
 
-            <section style={{ paddingTop: 0 }}>
+            <section className="section-tight">
                 <div className="wrap">
                     <div className="section-head center reveal">
                         <span className="eyebrow">Нашите партньори</span>
@@ -229,15 +219,12 @@ export default function Home({ services, partners, meta }: Props) {
                 </div>
             </section>
 
-            <section style={{ paddingTop: 0 }}>
+            <section className="section-tight">
                 <div className="wrap">
                     <div className="cta-banner reveal">
                         <div className="in">
                             <h2>Имате товар за превоз?</h2>
-                            <p>
-                                Изпратете запитване или се свържете с нас за оферта, съобразена с вашия маршрут и вид
-                                товар.
-                            </p>
+                            <p>Изпратете запитване или се свържете с нас за оферта, съобразена с вашия маршрут и вид товар.</p>
                             <div className="btns">
                                 <Link className="btn btn-accent btn-lg" href="/contact">
                                     Поискай оферта

@@ -19,8 +19,8 @@ export default function Brand({ siteName = 'Глобал Карго Спед', t
                     <img
                         className="logo-img"
                         src="/assets/img/logo.webp"
-                        width={46}
-                        height={46}
+                        width={62}
+                        height={62}
                         decoding="async"
                         alt=""
                         onError={() => setLogoFailed(true)}

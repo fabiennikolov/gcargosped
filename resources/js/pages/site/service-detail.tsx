@@ -1,9 +1,9 @@
-import { Link, usePage } from '@inertiajs/react';
 import { PhoneIcon } from '@/components/site/icons';
 import InquiryForm from '@/components/site/inquiry-form';
 import { PhotoCard } from '@/components/site/service-grid';
 import SiteLayout from '@/layouts/site-layout';
 import type { PageMeta, ServiceCard, ServiceDetail, SharedSiteProps } from '@/types/site';
+import { Link, usePage } from '@inertiajs/react';
 
 interface Props {
     service: ServiceDetail;
@@ -75,8 +75,8 @@ export default function ServiceDetailPage({ service, related, meta }: Props) {
                     </div>
 
                     {others.length > 0 && (
-                        <div style={{ marginTop: 'clamp(40px,5vw,60px)' }}>
-                            <div className="section-head" style={{ marginBottom: 22, maxWidth: 'none' }}>
+                        <div className="stack-y-sm">
+                            <div className="section-head" style={{ marginBottom: 22 }}>
                                 <span className="eyebrow">Още услуги</span>
                                 <h2 style={{ fontSize: 'var(--fs-h3)', marginTop: '.3rem' }}>Другите ни услуги</h2>
                             </div>
