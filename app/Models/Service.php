@@ -20,11 +20,6 @@ class Service extends Model
         ];
     }
 
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);

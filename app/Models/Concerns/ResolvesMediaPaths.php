@@ -25,9 +25,13 @@ trait ResolvesMediaPaths
         $path = ltrim($path, '/');
 
         // Files that came with the original static site are served straight
-        // out of the document root.
+        // out of the document root. Filament's ImageColumn only accepts a
+        // path as-is when it validates as an absolute URL (with scheme) —
+        // a root-relative "/assets/..." string falls through to its own
+        // disk resolution instead, which fails since these files aren't on
+        // the configured default disk.
         if (str_starts_with($path, 'assets/')) {
-            return '/'.$path;
+            return url('/'.$path);
         }
 
         return Storage::disk('public')->url($path);
