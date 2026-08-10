@@ -1798,6 +1798,11 @@ html.js .gcs .reveal.in {
 .gcs .service-body {
     padding: clamp(40px, 5vw, 74px) 0;
 }
+@media (max-width: 560px) {
+    .gcs .service-body {
+        padding: 16px;
+    }
+}
 .gcs .service-rich h2 {
     font-size: var(--fs-h3);
     margin: 1.6rem 0 0.6rem;
