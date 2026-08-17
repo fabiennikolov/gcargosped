@@ -17,6 +17,13 @@ class Inquiry extends Model
         'closed' => 'Затворено',
     ];
 
+    /** Which form the inquiry came from — mirrors the `source` values. */
+    public const SOURCES = [
+        'offer' => 'Поискай оферта',
+        'contact' => 'Контакти',
+        'service' => 'Страница на услуга',
+    ];
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

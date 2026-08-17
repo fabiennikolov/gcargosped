@@ -86,6 +86,81 @@ INERTIA_SSR_ENABLED=true
 INERTIA_SSR_URL=http://127.0.0.1:13714
 ```
 
+## Имейли
+
+Всяка изпратена форма — оферта от началната страница, съобщение от `/contact`
+и запитване от страница на услуга — се записва в базата и веднага след това
+тръгва като имейл до офиса (`app/Mail/InquiryReceived.php`). Изпраща се от
+`noreply@gcargosped.com`, но `Reply-To` е адресът на клиента, така че отговорът
+от пощата отива директно при него.
+
+Изпращането е синхронно, не през опашка: няма queue worker в продукция, а
+обемът е няколко запитвания на ден. Ако доставчикът гръмне, запитването остава
+в базата и си стои в `/admin/inquiries` — грешката влиза в
+`storage/logs/laravel.log` като `Inquiry notification failed`, а клиентът вижда
+нормалното съобщение за успех.
+
+### Настройка на Resend
+
+1. В [resend.com](https://resend.com) → **Domains** → добави `gcargosped.com`,
+   регион **EU (Ireland)**.
+2. Добави трите записа, които таблото показва. Стойностите са уникални за
+   акаунта — копирай ги оттам, не от този файл:
+
+   | Type | Host | Стойност |
+   |---|---|---|
+   | MX | `send` | `feedback-smtp.eu-west-1.amazonses.com.` (priority 10) |
+   | TXT | `send` | `v=spf1 include:amazonses.com ~all` |
+   | TXT | `resend._domainkey` | `p=MIGfMA0GCSq…` |
+
+   В Namecheap MX не е в списъка с типове при Host Records — управлява се
+   отделно, в секция **MAIL SETTINGS** → **Custom MX** на същата страница.
+   Превключването е за цялата зона, така че ако домейнът приема поща, старите
+   MX записи трябва да се добавят наново заедно с този.
+
+3. Изчакай статусът да стане **Verified**. Проверка отвън:
+
+   ```bash
+   dig +short MX send.gcargosped.com
+   dig +short TXT send.gcargosped.com
+   dig +short TXT resend._domainkey.gcargosped.com
+   ```
+
+4. **API Keys** → нов ключ с права *Sending access*.
+
+### В продукция
+
+```
+MAIL_MAILER=resend
+RESEND_KEY=re_xxxxxxxx
+MAIL_FROM_ADDRESS="noreply@gcargosped.com"
+MAIL_FROM_NAME="Глобал Карго Спед"
+MAIL_INQUIRY_TO=gcargosped@gmail.com
+```
+
+`MAIL_FROM_ADDRESS` е самоличността на изпращача и трябва да е на верифицирания
+домейн; `MAIL_INQUIRY_TO` е пощата, в която падат запитванията.
+
+Деплоят трябва да мине през `composer install` — `resend/resend-laravel` е
+зависимост. И задължително след промяна на `.env`:
+
+```bash
+php artisan config:clear && php artisan config:cache
+```
+
+Продукцията държи кеширан конфиг, така че само редакция на `.env` не променя
+нищо.
+
+### Локално
+
+```
+MAIL_MAILER=log
+```
+
+Имейлите отиват в `storage/logs/laravel.log` вместо навън. За реална проба
+насочи временно `MAIL_INQUIRY_TO` към собствения си адрес — иначе тестовите
+запитвания стигат до офиса.
+
 ## Тестове
 
 ```bash
