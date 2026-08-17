@@ -73,11 +73,7 @@ class InquiriesTable
 
                 SelectFilter::make('source')
                     ->label('Източник')
-                    ->options([
-                        'offer' => 'Поискай оферта',
-                        'contact' => 'Контакти',
-                        'service' => 'Страница на услуга',
-                    ]),
+                    ->options(Inquiry::SOURCES),
             ])
             ->recordActions([
                 EditAction::make()->label('Отвори'),

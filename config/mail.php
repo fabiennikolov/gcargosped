@@ -113,4 +113,19 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Inquiry Notifications
+    |--------------------------------------------------------------------------
+    |
+    | Where the public site's forms are delivered. This is the office inbox,
+    | not the sending identity: mail leaves as MAIL_FROM_ADDRESS (the domain
+    | verified with Resend) and arrives here.
+    |
+    */
+
+    'inquiries' => [
+        'to' => env('MAIL_INQUIRY_TO', 'gcargosped@gmail.com'),
+    ],
+
 ];
