@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -35,6 +36,7 @@ class SiteSettings extends Page
     private const KEYS = [
         'site_name', 'hero_title', 'hero_subtitle', 'hero_cta',
         'phone', 'phone_raw', 'email', 'address', 'working_hours',
+        'whatsapp_number', 'whatsapp_greeting', 'whatsapp_teaser', 'whatsapp_topics',
         'facebook_url', 'linkedin_url', 'seo_title', 'seo_description',
     ];
 
@@ -43,13 +45,51 @@ class SiteSettings extends Page
         return 'Настройки на сайта';
     }
 
+    /**
+     * Settings that are edited as a list but stored as one JSON string, because
+     * the settings table is key/value and holds strings only.
+     */
+    private const LIST_KEYS = ['whatsapp_topics'];
+
     public function mount(): void
     {
         $stored = Setting::map();
 
         $this->form->fill(
-            collect(self::KEYS)->mapWithKeys(fn (string $key) => [$key => $stored[$key] ?? ''])->all(),
+            collect(self::KEYS)
+                ->mapWithKeys(fn (string $key) => [
+                    $key => in_array($key, self::LIST_KEYS, true)
+                        ? self::decodeList($stored[$key] ?? null)
+                        : $stored[$key] ?? '',
+                ])
+                ->all(),
         );
+    }
+
+    /**
+     * Read a list setting, accepting the newline-separated text this field used
+     * before it became a repeater so an existing site keeps its options.
+     *
+     * @return array<int, string>
+     */
+    private static function decodeList(?string $raw): array
+    {
+        $raw = trim((string) $raw);
+
+        if ($raw === '') {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+
+        if (is_array($decoded)) {
+            return array_values(array_filter(array_map(
+                fn ($item) => trim((string) $item),
+                $decoded,
+            ), fn (string $item) => $item !== ''));
+        }
+
+        return array_values(array_filter(array_map('trim', explode("\n", $raw))));
     }
 
     public function form(Schema $schema): Schema
@@ -83,6 +123,49 @@ class SiteSettings extends Page
                         TextInput::make('working_hours')
                             ->label('Работно време')
                             ->columnSpanFull(),
+                    ]),
+
+                /*
+                 * The floating button reads these three. An empty number hides
+                 * it entirely, so the section can be filled in later without
+                 * shipping a half-configured widget to visitors.
+                 */
+                Section::make('WhatsApp бутон')
+                    ->description('Зеленото кръгче долу вдясно. Празен номер = бутонът не се показва.')
+                    ->schema([
+                        TextInput::make('whatsapp_number')
+                            ->label('WhatsApp номер')
+                            ->tel()
+                            ->placeholder('+359877415141'),
+
+                        TextInput::make('whatsapp_greeting')
+                            ->label('Надпис над опциите')
+                            ->placeholder('Здравейте! С какво можем да помогнем?'),
+
+                        TextInput::make('whatsapp_teaser')
+                            ->label('Подканващо балонче')
+                            ->placeholder('Имате въпрос? Пишете ни.'),
+
+                        /*
+                         * A repeater rather than a textarea: the options are a
+                         * list, and a list edited as free text is one stray
+                         * blank line away from an empty button in the menu.
+                         * Simple mode keeps the stored shape a flat array of
+                         * strings instead of a row of objects.
+                         */
+                        Repeater::make('whatsapp_topics')
+                            ->label('Опции в менюто')
+                            ->simple(
+                                TextInput::make('topic')
+                                    ->hiddenLabel()
+                                    ->required()
+                                    ->maxLength(60)
+                                    ->placeholder('Оферта за превоз'),
+                            )
+                            ->addActionLabel('Добави опция')
+                            ->reorderable()
+                            ->defaultItems(0)
+                            ->maxItems(6),
                     ]),
 
                 Section::make('Начална страница')
@@ -135,12 +218,33 @@ class SiteSettings extends Page
         $state = $this->form->getState();
 
         foreach (self::KEYS as $key) {
-            Setting::put($key, $state[$key] ?? null);
+            $value = $state[$key] ?? null;
+
+            if (in_array($key, self::LIST_KEYS, true)) {
+                $value = self::encodeList($value);
+            }
+
+            Setting::put($key, $value);
         }
 
         Notification::make()
             ->title('Настройките са запазени')
             ->success()
             ->send();
+    }
+
+    /**
+     * Store a repeater's rows as one JSON array. An empty list is stored as
+     * null rather than "[]" so the front end falls back to its defaults instead
+     * of rendering a menu with no options in it.
+     */
+    private static function encodeList(mixed $value): ?string
+    {
+        $items = array_values(array_filter(
+            array_map(fn ($item) => trim((string) $item), (array) $value),
+            fn (string $item) => $item !== '',
+        ));
+
+        return $items === [] ? null : json_encode($items, JSON_UNESCAPED_UNICODE);
     }
 }
