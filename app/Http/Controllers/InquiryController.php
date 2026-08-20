@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInquiryRequest;
 use App\Mail\InquiryReceived;
 use App\Models\Inquiry;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -12,6 +13,9 @@ use Throwable;
 
 class InquiryController extends Controller
 {
+    /** Shown when the admin has not written a thank-you of its own. */
+    private const DEFAULT_THANK_YOU = 'Благодарим! Ще се свържем с вас възможно най-скоро.';
+
     public function store(StoreInquiryRequest $request): RedirectResponse
     {
         $inquiry = Inquiry::create([
@@ -24,7 +28,10 @@ class InquiryController extends Controller
         return back()->with('inquiry', [
             'ok' => true,
             'id' => $inquiry->id,
-            'message' => 'Благодарим! Ще се свържем с вас възможно най-скоро.',
+            // Editable in the admin, so the office can promise what it can
+            // actually keep. Blank falls back rather than showing an empty
+            // thank-you card.
+            'message' => trim((string) Setting::get('inquiry_success')) ?: self::DEFAULT_THANK_YOU,
         ]);
     }
 

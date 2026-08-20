@@ -37,6 +37,7 @@ class SiteSettings extends Page
         'site_name', 'hero_title', 'hero_subtitle', 'hero_cta',
         'phone', 'phone_raw', 'email', 'address', 'working_hours',
         'whatsapp_number', 'whatsapp_greeting', 'whatsapp_teaser', 'whatsapp_topics',
+        'inquiry_title', 'inquiry_subtitle', 'inquiry_success',
         'facebook_url', 'linkedin_url', 'seo_title', 'seo_description',
     ];
 
@@ -123,6 +124,34 @@ class SiteSettings extends Page
                         TextInput::make('working_hours')
                             ->label('Работно време')
                             ->columnSpanFull(),
+                    ]),
+
+                /*
+                 * The copy around the short form — the two lines above it and
+                 * the thank-you after it. One set for every form on the site:
+                 * the home page hero and each service page show the same pair,
+                 * so a promise the office changes its mind about is changed in
+                 * one place. Empty falls back to the wording in the component.
+                 */
+                Section::make('Форма за запитване')
+                    ->description('Текстът над кратката форма и съобщението, което клиентът вижда след изпращане.')
+                    ->schema([
+                        TextInput::make('inquiry_title')
+                            ->label('Заглавие над формата')
+                            ->maxLength(80)
+                            ->placeholder('Изпрати запитване'),
+
+                        TextInput::make('inquiry_subtitle')
+                            ->label('Ред под заглавието')
+                            ->maxLength(160)
+                            ->placeholder('Оставете данни и ще ви потърсим с оферта.')
+                            ->helperText('Тук стоеше обещанието за отговор до 1 работен ден — сменя се свободно.'),
+
+                        Textarea::make('inquiry_success')
+                            ->label('Съобщение след изпращане')
+                            ->rows(2)
+                            ->maxLength(300)
+                            ->placeholder('Благодарим! Ще се свържем с вас възможно най-скоро.'),
                     ]),
 
                 /*

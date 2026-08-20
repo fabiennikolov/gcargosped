@@ -54,12 +54,10 @@ export default function ServiceDetailPage({ service, related, meta }: Props) {
                         {/* `.service-hero-form` is itself the glass card — no
                             second card nested inside it. */}
                         <div className="glass service-hero-form">
-                            <InquiryForm
-                                source="service"
-                                variant="lead"
-                                title="Изпрати запитване"
-                                subtitle="Оставете данни за тази услуга — ще ви потърсим до 1 работен ден."
-                            />
+                            {/* Copy comes from the admin, same as the hero form —
+                                a second wording hard-coded here is one the client
+                                would edit in the settings and never see change. */}
+                            <InquiryForm source="service" variant="lead" />
                         </div>
                     </div>
                 </div>
