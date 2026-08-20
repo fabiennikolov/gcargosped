@@ -14,9 +14,18 @@ interface Props {
     variant: 'lead' | 'offer';
 
     serviceId?: number;
-    title?: string;
-    subtitle?: string;
 }
+
+/**
+ * The heading and the line under it on the compact form. Both are editable in
+ * the admin (Настройки на сайта → Форма за запитване); these are what a site
+ * that has never opened that section shows.
+ *
+ * Deliberately no callback deadline in the default: a promise baked into the
+ * markup is one the office never agreed to and cannot take back.
+ */
+const DEFAULT_TITLE = 'Изпрати запитване';
+const DEFAULT_SUBTITLE = 'Оставете данни и ще ви потърсим с оферта.';
 
 /** The cargo types the original select offered, in the same order. */
 const CARGO_TYPES = [
@@ -46,8 +55,9 @@ const CITIES = [
 
 const OTHER = 'other';
 
-export default function InquiryForm({ source, variant, serviceId, title, subtitle }: Props) {
+export default function InquiryForm({ source, variant, serviceId }: Props) {
     const page = usePage<SharedSiteProps>();
+    const { settings } = page.props;
     const flash = page.props.flash?.inquiry;
 
     const form = useForm({
@@ -181,8 +191,8 @@ export default function InquiryForm({ source, variant, serviceId, title, subtitl
     if (variant === 'lead') {
         return (
             <div className="leadform">
-                <h3>{title ?? 'Изпрати запитване'}</h3>
-                <p className="sub">{subtitle ?? 'Оставете данни — ще ви потърсим до 1 работен ден.'}</p>
+                <h3>{settings.inquiry_title?.trim() || DEFAULT_TITLE}</h3>
+                <p className="sub">{settings.inquiry_subtitle?.trim() || DEFAULT_SUBTITLE}</p>
 
                 <form onSubmit={submit} noValidate>
                     {nameField}

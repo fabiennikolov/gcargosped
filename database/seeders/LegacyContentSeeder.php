@@ -47,6 +47,13 @@ class LegacyContentSeeder extends Seeder
             'email' => $content['email'],
             'address' => 'Пловдив, ул. Ламартин 2',
             'working_hours' => 'Понеделник – Петък, 09:00 – 18:00',
+
+            // Seeded rather than left to the component defaults so the client
+            // opens the settings page and sees the text the site is actually
+            // showing, instead of an empty box that renders something anyway.
+            'inquiry_title' => 'Изпрати запитване',
+            'inquiry_subtitle' => 'Оставете данни и ще ви потърсим с оферта.',
+            'inquiry_success' => 'Благодарим! Ще се свържем с вас възможно най-скоро.',
             'facebook_url' => '',
             'linkedin_url' => '',
             'seo_title' => 'Глобал Карго Спед — Транспорт, спедиция и логистика | България, Европа, Турция',

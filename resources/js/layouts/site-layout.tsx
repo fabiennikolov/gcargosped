@@ -1,10 +1,11 @@
+import Brand from '@/components/site/brand';
+import { BurgerIcon, CloseIcon, FacebookIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/site/icons';
+import WhatsappButton from '@/components/site/whatsapp-button';
+import { useReveal } from '@/hooks/use-reveal';
+import type { PageMeta, SharedSiteProps } from '@/types/site';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren, useEffect, useState } from 'react';
 import '../../css/site.css';
-import Brand from '@/components/site/brand';
-import { useReveal } from '@/hooks/use-reveal';
-import { BurgerIcon, CloseIcon, FacebookIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/site/icons';
-import type { PageMeta, SharedSiteProps } from '@/types/site';
 
 const NAV = [
     { label: 'Начало', href: '/' },
@@ -101,9 +102,12 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
                 </div>
             </header>
 
-            <div className={`scrim${menuOpen ? ' show' : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
+            {/* Whole class strings rather than a conditional suffix: the
+                tailwind prettier plugin normalises whitespace inside className,
+                and silently ate the leading space in `${open ? ' show' : ''}`. */}
+            <div className={menuOpen ? 'scrim show' : 'scrim'} onClick={() => setMenuOpen(false)} aria-hidden="true" />
 
-            <aside className={`mobile-menu${menuOpen ? ' open' : ''}`}>
+            <aside className={menuOpen ? 'mobile-menu open' : 'mobile-menu'}>
                 <div className="mhead">
                     <button className="mclose" aria-label="Затвори" onClick={() => setMenuOpen(false)}>
                         <CloseIcon />
@@ -120,6 +124,16 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
             </aside>
 
             <main>{children}</main>
+
+            {/* Renders nothing until a number is set in the admin, so the
+                section can be filled in after this ships. */}
+            <WhatsappButton
+                number={settings.whatsapp_number}
+                greeting={settings.whatsapp_greeting}
+                teaser={settings.whatsapp_teaser}
+                topics={settings.whatsapp_topics}
+                page={current}
+            />
 
             <footer>
                 <div className="wrap">

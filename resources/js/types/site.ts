@@ -55,6 +55,15 @@ export interface SiteSettings {
     email?: string;
     address?: string;
     working_hours?: string;
+    whatsapp_number?: string;
+    whatsapp_greeting?: string;
+    whatsapp_teaser?: string;
+    /** JSON array of options; each opens WhatsApp with itself as the first message. */
+    whatsapp_topics?: string;
+    inquiry_title?: string;
+    inquiry_subtitle?: string;
+    /** Shown after a form is sent; the server sends it through as flash.inquiry.message. */
+    inquiry_success?: string;
     facebook_url?: string;
     linkedin_url?: string;
     seo_title?: string;

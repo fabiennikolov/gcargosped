@@ -2263,3 +2263,224 @@ html.js .gcs .reveal.in {
         line-height: 1.25;
     }
 }
+
+/* ============================ WHATSAPP DOCK ============================
+   Floating click-to-chat button, bottom-right on every page. Sits above the
+   page but below the mobile menu scrim, so opening the burger never leaves a
+   green circle floating over the drawer. */
+.gcs .wa-dock {
+    position: fixed;
+    right: clamp(14px, 3vw, 28px);
+    bottom: clamp(14px, 3vw, 28px);
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.gcs .wa-fab {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border: 0;
+    border-radius: 50%;
+    background: #25d366;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 14px 30px -10px rgba(37, 211, 102, 0.65);
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
+}
+.gcs .wa-fab:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 18px 38px -10px rgba(37, 211, 102, 0.75);
+}
+.gcs .wa-fab:focus-visible {
+    outline: 0;
+    box-shadow: 0 0 0 4px rgba(37, 211, 102, 0.35);
+}
+.gcs .wa-dock.open .wa-fab {
+    transform: rotate(8deg) scale(0.94);
+}
+
+.gcs .wa-panel {
+    width: min(266px, calc(100vw - 40px));
+    padding: 14px;
+    border: 1px solid var(--glass-brd);
+    border-radius: var(--radius-sm);
+    background: var(--glass-strong);
+    backdrop-filter: var(--blur);
+    box-shadow: var(--shadow);
+    animation: wa-rise 0.18s ease both;
+}
+.gcs .wa-panel[hidden] {
+    display: none;
+}
+
+@keyframes wa-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+.gcs .wa-panel {
+    position: relative;
+}
+
+.gcs .wa-panel-x {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    padding: 0 0.2em;
+    border: 0;
+    background: none;
+    color: var(--slate-2);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.18s ease;
+}
+.gcs .wa-panel-x:hover {
+    color: var(--ink);
+}
+.gcs .wa-panel-x:focus-visible {
+    outline: 0;
+    color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.25);
+    border-radius: 6px;
+}
+
+.gcs .wa-greet {
+    /* Right padding keeps a two-line greeting clear of the close button. */
+    margin: 0 0 10px;
+    padding-right: 1.4em;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ink);
+}
+
+.gcs .wa-panel ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.gcs .wa-panel button {
+    width: 100%;
+    padding: 0.62em 0.8em;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 0.83rem;
+    text-align: left;
+    cursor: pointer;
+    transition:
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
+}
+.gcs .wa-panel button:hover {
+    border-color: #25d366;
+    color: var(--ink);
+    transform: translateX(2px);
+}
+.gcs .wa-panel button:focus-visible {
+    outline: 0;
+    border-color: #25d366;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gcs .wa-fab,
+    .gcs .wa-panel button {
+        transition: none;
+    }
+    .gcs .wa-panel {
+        animation: none;
+    }
+}
+
+/* --- Attention: one slow pulse ring, retired on first interaction ---------
+   Drawn with box-shadow rather than a scaled pseudo-element: a ::before with a
+   negative z-index paints above the button's own background (the FAB is its own
+   stacking context), which tinted the circle instead of radiating from behind
+   it. A spreading shadow only ever grows outward. */
+.gcs .wa-dock.nudge .wa-fab {
+    animation: wa-pulse 2.6s ease-out infinite;
+}
+.gcs .wa-dock.nudge .wa-fab:hover {
+    animation: none;
+}
+
+@keyframes wa-pulse {
+    0% {
+        box-shadow:
+            0 14px 30px -10px rgba(37, 211, 102, 0.65),
+            0 0 0 0 rgba(37, 211, 102, 0.55);
+    }
+    70%,
+    100% {
+        box-shadow:
+            0 14px 30px -10px rgba(37, 211, 102, 0.65),
+            0 0 0 22px rgba(37, 211, 102, 0);
+    }
+}
+
+/* --- Teaser bubble -------------------------------------------------------- */
+.gcs .wa-teaser {
+    display: flex;
+    align-items: stretch;
+    max-width: min(240px, calc(100vw - 40px));
+    border: 1px solid var(--glass-brd);
+    border-radius: 14px;
+    background: var(--glass-strong);
+    backdrop-filter: var(--blur);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    animation: wa-rise 0.24s ease both;
+}
+
+.gcs .wa-teaser-body {
+    flex: 1;
+    padding: 0.7em 0.5em 0.7em 0.85em;
+    border: 0;
+    background: none;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: left;
+    cursor: pointer;
+}
+
+.gcs .wa-teaser-x {
+    padding: 0 0.6em 0 0.35em;
+    border: 0;
+    background: none;
+    color: var(--slate-2);
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.18s ease;
+}
+.gcs .wa-teaser-x:hover {
+    color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gcs .wa-dock.nudge .wa-fab {
+        animation: none;
+    }
+    .gcs .wa-teaser {
+        animation: none;
+    }
+}

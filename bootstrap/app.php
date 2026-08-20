@@ -17,6 +17,16 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        /*
+         * The WhatsApp click beacon is sent with navigator.sendBeacon while the
+         * browser is already leaving for wa.me, and sendBeacon cannot set the
+         * CSRF header — so every click would 419. Exempting it costs nothing:
+         * the endpoint is unauthenticated, changes no state a forgery could
+         * abuse, and is rate limited at the route. The figure it feeds is a
+         * counter, not a decision.
+         */
+        $middleware->validateCsrfTokens(except: ['track/whatsapp']);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

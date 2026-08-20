@@ -4,6 +4,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\WhatsappClickController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +29,15 @@ Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.sho
 Route::post('/inquiries', [InquiryController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('inquiries.store');
+
+/*
+ * Taps on the floating WhatsApp button. The conversation itself happens on the
+ * owner's phone where we see nothing, so this counter is the only measure of
+ * what the button is worth.
+ */
+Route::post('/track/whatsapp', WhatsappClickController::class)
+    ->middleware('throttle:20,1')
+    ->name('track.whatsapp');
 
 Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
 
