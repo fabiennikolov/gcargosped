@@ -134,7 +134,7 @@ class SiteSettings extends Page
                  * one place. Empty falls back to the wording in the component.
                  */
                 Section::make('Форма за запитване')
-                    ->description('Текстът над кратката форма и съобщението, което клиентът вижда след изпращане.')
+                    ->description('Текстът над кратката форма и съобщението след изпращане. Празно поле = показва се текстът в сивото.')
                     ->schema([
                         TextInput::make('inquiry_title')
                             ->label('Заглавие над формата')
