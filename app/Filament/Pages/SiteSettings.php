@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -34,8 +35,8 @@ class SiteSettings extends Page
 
     /** Every key this page owns; anything else in the table is left alone. */
     private const KEYS = [
-        'site_name', 'hero_title', 'hero_subtitle', 'hero_cta',
-        'phone', 'phone_raw', 'email', 'address', 'working_hours',
+        'site_name', 'logo_path', 'hero_title', 'hero_subtitle', 'hero_cta', 'stats',
+        'phone', 'phone_raw', 'email', 'address', 'working_hours', 'footer_tagline',
         'whatsapp_number', 'whatsapp_greeting', 'whatsapp_teaser', 'whatsapp_topics',
         'inquiry_title', 'inquiry_subtitle', 'inquiry_success',
         'facebook_url', 'linkedin_url', 'seo_title', 'seo_description',
@@ -52,6 +53,15 @@ class SiteSettings extends Page
      */
     private const LIST_KEYS = ['whatsapp_topics'];
 
+    /**
+     * The same idea for repeaters whose rows are more than one field: stored as
+     * one JSON string, edited as a list of rows.
+     */
+    private const ROW_KEYS = ['stats'];
+
+    /** Columns each row of a ROW_KEYS repeater keeps, in order. */
+    private const ROW_FIELDS = ['stats' => ['value', 'label']];
+
     public function mount(): void
     {
         $stored = Setting::map();
@@ -59,9 +69,11 @@ class SiteSettings extends Page
         $this->form->fill(
             collect(self::KEYS)
                 ->mapWithKeys(fn (string $key) => [
-                    $key => in_array($key, self::LIST_KEYS, true)
-                        ? self::decodeList($stored[$key] ?? null)
-                        : $stored[$key] ?? '',
+                    $key => match (true) {
+                        in_array($key, self::LIST_KEYS, true) => self::decodeList($stored[$key] ?? null),
+                        in_array($key, self::ROW_KEYS, true) => self::decodeRows($key, $stored[$key] ?? null),
+                        default => $stored[$key] ?? '',
+                    },
                 ])
                 ->all(),
         );
@@ -91,6 +103,33 @@ class SiteSettings extends Page
         }
 
         return array_values(array_filter(array_map('trim', explode("\n", $raw))));
+    }
+
+    /**
+     * Read a repeater setting back into rows, dropping anything that is not a
+     * row of the expected shape — a hand-edited value in the database must not
+     * be able to break the settings screen.
+     *
+     * @return array<int, array<string, string>>
+     */
+    private static function decodeRows(string $key, ?string $raw): array
+    {
+        $decoded = json_decode(trim((string) $raw), true);
+
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        $fields = self::ROW_FIELDS[$key];
+
+        return array_values(array_filter(array_map(
+            fn ($row) => is_array($row)
+                ? collect($fields)->mapWithKeys(fn (string $field) => [
+                    $field => trim((string) ($row[$field] ?? '')),
+                ])->all()
+                : null,
+            $decoded,
+        )));
     }
 
     public function form(Schema $schema): Schema
@@ -134,7 +173,7 @@ class SiteSettings extends Page
                  * one place. Empty falls back to the wording in the component.
                  */
                 Section::make('Форма за запитване')
-                    ->description('Текстът над кратката форма и съобщението, което клиентът вижда след изпращане.')
+                    ->description('Текстът над кратката форма и съобщението след изпращане. Празно поле = показва се текстът в сивото.')
                     ->schema([
                         TextInput::make('inquiry_title')
                             ->label('Заглавие над формата')
@@ -197,6 +236,25 @@ class SiteSettings extends Page
                             ->maxItems(6),
                     ]),
 
+                /*
+                 * The mark in the header and the footer. Stored as a path, the
+                 * same as every other uploaded image; empty falls back to the
+                 * file the original site shipped, so a half-finished change
+                 * never leaves the site with no logo at all.
+                 */
+                Section::make('Лого')
+                    ->description('Показва се в хедъра и във футъра. Празно = ползва се логото, с което сайтът е пуснат.')
+                    ->schema([
+                        FileUpload::make('logo_path')
+                            ->label('Лого')
+                            ->image()
+                            ->disk('public')
+                            ->directory('branding')
+                            ->maxSize(2048)
+                            ->imagePreviewHeight('80')
+                            ->helperText('PNG, WebP или SVG. Най-добре квадратно и поне 200×200 px — показва се на 62 px.'),
+                    ]),
+
                 Section::make('Начална страница')
                     ->columns(2)
                     ->schema([
@@ -213,6 +271,47 @@ class SiteSettings extends Page
                             ->label('Подзаглавие')
                             ->rows(3)
                             ->columnSpanFull(),
+
+                        /*
+                         * The dark band under the services. Four is what the
+                         * layout is built for; fewer still line up, more would
+                         * wrap into a second row of one.
+                         */
+                        Repeater::make('stats')
+                            ->label('Числа в тъмната лента')
+                            ->helperText('Празен списък = показват се числата по подразбиране.')
+                            ->columns(2)
+                            ->schema([
+                                TextInput::make('value')
+                                    ->label('Число')
+                                    ->required()
+                                    ->maxLength(12)
+                                    ->placeholder('15+')
+                                    ->helperText('Знакът след числото се оцветява — „15+“ показва зелено „+“.'),
+
+                                TextInput::make('label')
+                                    ->label('Надпис')
+                                    ->required()
+                                    ->maxLength(40)
+                                    ->placeholder('години опит'),
+                            ])
+                            ->itemLabel(fn (array $state): ?string => trim(($state['value'] ?? '').' '.($state['label'] ?? '')) ?: null)
+                            ->addActionLabel('Добави число')
+                            ->reorderable()
+                            ->collapsible()
+                            ->defaultItems(0)
+                            ->maxItems(4)
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Футър')
+                    ->description('Редът под логото в долния край на всяка страница.')
+                    ->schema([
+                        Textarea::make('footer_tagline')
+                            ->label('Текст под логото')
+                            ->rows(2)
+                            ->maxLength(300)
+                            ->placeholder('Вашият товар е наша грижа. Транспорт, складиране и логистика в България, Европа и Турция.'),
                     ]),
 
                 Section::make('Социални мрежи')
@@ -253,6 +352,10 @@ class SiteSettings extends Page
                 $value = self::encodeList($value);
             }
 
+            if (in_array($key, self::ROW_KEYS, true)) {
+                $value = self::encodeRows($key, $value);
+            }
+
             Setting::put($key, $value);
         }
 
@@ -275,5 +378,25 @@ class SiteSettings extends Page
         ));
 
         return $items === [] ? null : json_encode($items, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Store a multi-field repeater as one JSON array of rows. Rows with an
+     * empty field are dropped rather than stored half-filled, and an empty
+     * list is stored as null so the front end falls back to its defaults.
+     */
+    private static function encodeRows(string $key, mixed $value): ?string
+    {
+        $fields = self::ROW_FIELDS[$key];
+
+        $rows = collect((array) $value)
+            ->map(fn ($row) => collect($fields)
+                ->mapWithKeys(fn (string $field) => [$field => trim((string) (((array) $row)[$field] ?? ''))])
+                ->all())
+            ->reject(fn (array $row) => in_array('', $row, true))
+            ->values()
+            ->all();
+
+        return $rows === [] ? null : json_encode($rows, JSON_UNESCAPED_UNICODE);
     }
 }

@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
 import type { ServiceCard } from '@/types/site';
+import { Link } from '@inertiajs/react';
 
 interface Props {
     services: ServiceCard[];
@@ -17,7 +17,9 @@ interface Props {
 export function PhotoCard({ service, reveal = true }: { service: ServiceCard; reveal?: boolean }) {
     return (
         <Link className={reveal ? 'subphoto reveal' : 'subphoto'} href={service.url}>
-            {service.image && <img src={service.image} alt={service.title} loading="lazy" decoding="async" />}
+            {/* The ALT text written in the admin, falling back to the title —
+                either way it is read, never drawn next to the photo. */}
+            {service.image && <img src={service.image} alt={service.imageAlt || service.title} loading="lazy" decoding="async" />}
             <h3>{service.title}</h3>
             <span className="go">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">

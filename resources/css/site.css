@@ -904,7 +904,9 @@ body {
     position: relative;
     z-index: 1;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    /* --st-count comes from the page: the figures are editable in the admin,
+       so the band is not always four wide. */
+    grid-template-columns: repeat(var(--st-count, 4), 1fr);
     gap: var(--gap);
     text-align: center;
 }

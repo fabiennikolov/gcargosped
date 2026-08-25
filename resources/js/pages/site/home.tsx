@@ -5,6 +5,7 @@ import ServiceCarousel from '@/components/site/service-carousel';
 import SiteLayout from '@/layouts/site-layout';
 import type { PageMeta, Partner, ServiceCard, SharedSiteProps } from '@/types/site';
 import { Link, usePage } from '@inertiajs/react';
+import type { CSSProperties } from 'react';
 
 interface Props {
     services: { data: ServiceCard[] } | ServiceCard[];
@@ -15,14 +16,57 @@ interface Props {
 /** Resource collections arrive wrapped in `data`; plain arrays do not. */
 const unwrap = <T,>(value: { data: T[] } | T[]): T[] => (Array.isArray(value) ? value : value.data);
 
-const TRUST = ['15+ години опит', 'Европа · Турция · България', 'Товари до 24 тона'];
+const TRUST = ['Европа · Турция · България', 'Товари до 24 тона'];
 
-const STATS = [
-    { n: '15', u: '+', label: 'години опит' },
-    { n: '200', u: '+', label: 'клиенти' },
-    { n: '50', u: '+', label: 'собствени камиони' },
-    { n: '100', u: '+', label: 'нает транспорт' },
+interface Stat {
+    value: string;
+    label: string;
+}
+
+/** Shown until someone fills the list in under Настройки на сайта. */
+const DEFAULT_STATS: Stat[] = [
+    { value: '15+', label: 'години опит' },
+    { value: '200+', label: 'клиенти' },
+    { value: '50+', label: 'собствени камиони' },
+    { value: '100+', label: 'нает транспорт' },
 ];
+
+/**
+ * The admin stores the band as a JSON array of rows. Anything else in there —
+ * an empty setting, a hand-edited value — falls back to the figures above
+ * rather than leaving the band blank.
+ */
+function parseStats(raw?: string): Stat[] {
+    const value = (raw ?? '').trim();
+    if (!value) return DEFAULT_STATS;
+
+    try {
+        const parsed: unknown = JSON.parse(value);
+        if (!Array.isArray(parsed)) return DEFAULT_STATS;
+
+        const rows = parsed
+            .map((row) => ({
+                value: String((row as Stat)?.value ?? '').trim(),
+                label: String((row as Stat)?.label ?? '').trim(),
+            }))
+            .filter((row) => row.value !== '' && row.label !== '');
+
+        return rows.length > 0 ? rows : DEFAULT_STATS;
+    } catch {
+        return DEFAULT_STATS;
+    }
+}
+
+/**
+ * "15+" is drawn as a big 15 with the + in green beside it, so the number and
+ * whatever trails it are split apart. A value that does not start with digits
+ * ("над 15") is left whole rather than mangled.
+ */
+function splitStat(value: string): [string, string] {
+    const match = /^([\d\s.,]+)(.*)$/.exec(value.trim());
+
+    return match ? [match[1].trim(), match[2].trim()] : [value, ''];
+}
 
 const REGIONS = [
     { fx: 'BG', title: 'България', text: 'Вътрешен транспорт и дистрибуция до всяка точка в страната.' },
@@ -40,6 +84,11 @@ const STEPS = [
 export default function Home({ services, partners, meta }: Props) {
     const { settings } = usePage<SharedSiteProps>().props;
     const all = unwrap(services);
+    const stats = parseStats(settings.stats);
+
+    // The first chip repeats the first figure, so the two cannot disagree once
+    // the numbers are edited in the admin.
+    const trust = [`${stats[0].value} ${stats[0].label}`, ...TRUST];
 
     return (
         <SiteLayout meta={meta}>
@@ -89,7 +138,7 @@ export default function Home({ services, partners, meta }: Props) {
                             single-column mobile layout can place it after the form. Desktop
                             grid placement puts it back under the copy. */}
                         <div className="hero-trust">
-                            {TRUST.map((item) => (
+                            {trust.map((item) => (
                                 <span className="chip" key={item}>
                                     <CheckIcon /> {item}
                                 </span>
@@ -122,16 +171,23 @@ export default function Home({ services, partners, meta }: Props) {
             <section className="section-tight">
                 <div className="wrap">
                     <div className="band reveal">
-                        <div className="inner">
-                            {STATS.map((stat) => (
-                                <div className="st" key={stat.label}>
-                                    <b className="tnum">
-                                        {stat.n}
-                                        <span className="u">{stat.u}</span>
-                                    </b>
-                                    <span>{stat.label}</span>
-                                </div>
-                            ))}
+                        {/* The column count follows the list rather than being
+                            fixed at four, so removing a figure in the admin
+                            leaves three even columns instead of a gap. */}
+                        <div className="inner" style={{ '--st-count': stats.length } as CSSProperties}>
+                            {stats.map((stat, index) => {
+                                const [number, unit] = splitStat(stat.value);
+
+                                return (
+                                    <div className="st" key={`${stat.label}-${index}`}>
+                                        <b className="tnum">
+                                            {number}
+                                            {unit && <span className="u">{unit}</span>}
+                                        </b>
+                                        <span>{stat.label}</span>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

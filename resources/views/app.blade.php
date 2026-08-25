@@ -8,7 +8,10 @@
              from the SSR render, and a fallback tag alongside it would leave
              two <title> elements on every page, with the generic one first. --}}
 
-        <link rel="canonical" href="{{ url()->current() }}">
+        {{-- Built from APP_URL rather than the requested host: www and
+             non-www served the same page would otherwise each declare
+             themselves canonical. See App\Support\Canonical. --}}
+        <link rel="canonical" href="{{ \App\Support\Canonical::for(request()) }}">
 
         {{-- Marks that scripting is available, before anything paints. The
              scroll-reveal animation hides elements only under html.js, so a

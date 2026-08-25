@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * The trimmed shape used by every service listing (home, services index,
  * "related services" on a detail page). Detail pages send the body separately.
  *
- * @mixin \App\Models\Service
+ * @mixin Service
  */
 class ServiceCardResource extends JsonResource
 {
@@ -21,6 +22,7 @@ class ServiceCardResource extends JsonResource
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'image' => $this->image_url,
+            'imageAlt' => $this->image_alt,
             'icon' => $this->icon_svg,
             'isMain' => $this->is_main,
             'url' => $this->url,

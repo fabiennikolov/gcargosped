@@ -74,6 +74,7 @@ class ServiceController extends Controller
                 'subtitle' => $service->subtitle,
                 'body' => $service->body,
                 'image' => $service->image_url,
+                'imageAlt' => $service->image_alt,
                 'isMain' => $service->is_main,
                 'url' => $service->url,
             ],
