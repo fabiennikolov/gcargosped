@@ -29,6 +29,13 @@ class ServicesTable
                     ->sortable()
                     ->wrap(),
 
+                TextColumn::make('image_alt')
+                    ->label('ALT текст')
+                    ->placeholder('няма')
+                    ->color('gray')
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('slug')
                     ->label('URL')
                     ->searchable()

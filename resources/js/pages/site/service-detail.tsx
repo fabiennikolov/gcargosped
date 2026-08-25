@@ -27,8 +27,12 @@ export default function ServiceDetailPage({ service, related, meta }: Props) {
                     The home page's `.hero-scrim` must NOT be used — it is a
                     near-opaque pale gradient that hides the service photo.
                 */}
+                {/* Still aria-hidden: the h1 beside it already says what the
+                    page is, so a screen reader would only hear it twice. The
+                    ALT text is written for Google Images, which reads the
+                    attribute regardless. */}
                 <div className="service-hero-media" aria-hidden="true">
-                    {service.image && <img src={service.image} alt="" fetchPriority="high" decoding="async" />}
+                    {service.image && <img src={service.image} alt={service.imageAlt || service.title} fetchPriority="high" decoding="async" />}
                 </div>
 
                 <div className="service-hero-inner">

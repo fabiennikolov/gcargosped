@@ -7,7 +7,9 @@ use App\Models\Partner;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\Setting;
+use App\Support\Canonical;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -51,7 +53,7 @@ class PageController extends Controller
         ]);
     }
 
-    /** @return \Illuminate\Support\Collection<int, array<string, string|null>> */
+    /** @return Collection<int, array<string, string|null>> */
     private function partners()
     {
         return Partner::published()->orderBy('sort_order')->get()
@@ -93,7 +95,34 @@ class PageController extends Controller
         }
 
         return response()
-            ->view('sitemap', ['urls' => $urls])
+            // route() builds on the host the request came in on; the sitemap
+            // has to list the same addresses the pages call canonical, or the
+            // two contradict each other.
+            ->view('sitemap', ['urls' => $urls->map(fn (array $url) => [
+                ...$url,
+                'loc' => Canonical::rebase($url['loc']),
+            ])])
             ->header('Content-Type', 'application/xml');
+    }
+
+    /**
+     * Generated rather than a file in public/ so the Sitemap line always names
+     * the same origin as the canonical tags, whatever APP_URL is set to.
+     */
+    public function robots(): Response
+    {
+        $lines = [
+            'User-agent: *',
+            // Nothing in the admin belongs in an index, and a login form in
+            // the results is only an invitation.
+            'Disallow: /admin',
+            'Disallow: /up',
+            '',
+            'Sitemap: '.Canonical::origin().'/sitemap.xml',
+            '',
+        ];
+
+        return response(implode("\n", $lines))
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 }

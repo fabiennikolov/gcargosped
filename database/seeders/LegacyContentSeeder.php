@@ -47,6 +47,18 @@ class LegacyContentSeeder extends Seeder
             'email' => $content['email'],
             'address' => 'Пловдив, ул. Ламартин 2',
             'working_hours' => 'Понеделник – Петък, 09:00 – 18:00',
+            'footer_tagline' => 'Вашият товар е наша грижа. Транспорт, складиране и логистика '
+                .'в България, Европа и Турция.',
+
+            // The dark band on the home page. Seeded so the settings screen
+            // shows the four figures the site is displaying, ready to be
+            // corrected, instead of an empty list that renders them anyway.
+            'stats' => json_encode([
+                ['value' => '15+', 'label' => 'години опит'],
+                ['value' => '200+', 'label' => 'клиенти'],
+                ['value' => '50+', 'label' => 'собствени камиони'],
+                ['value' => '100+', 'label' => 'нает транспорт'],
+            ], JSON_UNESCAPED_UNICODE),
 
             // Seeded rather than left to the component defaults so the client
             // opens the settings page and sees the text the site is actually
@@ -90,22 +102,28 @@ class LegacyContentSeeder extends Seeder
 
     private function upsertService(string $slug, array $page, bool $isMain, int $order, ?string $icon): void
     {
-        Service::updateOrCreate(
-            ['slug' => $slug],
-            [
-                'title' => $page['title'],
-                'subtitle' => $page['sub'] ?? null,
-                'body' => $page['body'] ?? null,
-                // The static site shipped local WebP for every slug and only
-                // fell back to the Webflow CDN; we take the local copy so the
-                // new site has no dependency on Webflow at all.
-                'image' => "assets/img/services/{$slug}.webp",
-                'icon_svg' => $icon,
-                'is_main' => $isMain,
-                'sort_order' => $order,
-                'is_published' => true,
-            ],
-        );
+        $service = Service::firstOrNew(['slug' => $slug]);
+
+        $service->fill([
+            'title' => $page['title'],
+            'subtitle' => $page['sub'] ?? null,
+            'body' => $page['body'] ?? null,
+            'icon_svg' => $icon,
+            'is_main' => $isMain,
+            'sort_order' => $order,
+            'is_published' => true,
+        ]);
+
+        // Only on the way in, unlike the copy above: the photo is replaceable
+        // in the admin, and re-running this seeder after a content tweak must
+        // not throw away a picture the office has since changed. The file is
+        // the local WebP the static site shipped for every slug — it never
+        // pointed at the old Webflow CDN.
+        if (! $service->exists) {
+            $service->image = "assets/img/services/{$slug}.webp";
+        }
+
+        $service->save();
     }
 
     private function seedPartners(array $partners): void

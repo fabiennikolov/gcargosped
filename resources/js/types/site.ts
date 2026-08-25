@@ -3,6 +3,8 @@ export interface ServiceCard {
     title: string;
     subtitle: string | null;
     image: string | null;
+    /** Written in the admin, never drawn on the page — falls back to the title. */
+    imageAlt?: string | null;
     icon: string | null;
     isMain: boolean;
     url: string;
@@ -14,6 +16,7 @@ export interface ServiceDetail {
     subtitle: string | null;
     body: string | null;
     image: string | null;
+    imageAlt?: string | null;
     isMain: boolean;
     url: string;
 }
@@ -47,14 +50,22 @@ export interface PageMeta {
 /** Everything the admin can edit under "Настройки на сайта". */
 export interface SiteSettings {
     site_name?: string;
+    /** Stored path of the uploaded logo; use logo_url to render it. */
+    logo_path?: string;
+    /** logo_path resolved to a browser URL by HandleInertiaRequests. */
+    logo_url?: string | null;
     hero_title?: string;
     hero_subtitle?: string;
     hero_cta?: string;
+    /** JSON array of {value, label} rows for the dark band on the home page. */
+    stats?: string;
     phone?: string;
     phone_raw?: string;
     email?: string;
     address?: string;
     working_hours?: string;
+    /** The line under the logo in the footer. */
+    footer_tagline?: string;
     whatsapp_number?: string;
     whatsapp_greeting?: string;
     whatsapp_teaser?: string;
@@ -78,6 +89,8 @@ export interface NavService {
 /** Props shared with every Inertia response by HandleInertiaRequests. */
 export interface SharedSiteProps {
     settings: SiteSettings;
+    /** The address this page declares as its own — same value as <link rel="canonical">. */
+    canonical?: string;
     nav: { mainServices: NavService[] };
     flash: { inquiry?: { ok: boolean; id: number; message: string } };
     /** Shared for the SSR route() helper; also the only origin available server-side. */

@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Models\Service;
 use App\Models\Setting;
+use App\Support\Canonical;
+use App\Support\MediaPath;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -52,7 +54,11 @@ class HandleInertiaRequests extends Middleware
             // Contact details and hero copy are editable in the admin and used
             // by the header, footer and every form, so they ride along on every
             // response. Settings::map() is cached, so this costs no query.
-            'settings' => Setting::map(),
+            'settings' => $this->settings(),
+
+            // The same address the <link rel="canonical"> in the root template
+            // carries, so og:url cannot drift away from it.
+            'canonical' => Canonical::for($request),
 
             // Nav is data-driven: adding a service in the admin puts it in the
             // menu without a code change.
@@ -73,5 +79,20 @@ class HandleInertiaRequests extends Middleware
                 'location' => $request->url(),
             ],
         ];
+    }
+
+    /**
+     * The settings table stores the logo as a path; the browser needs a URL,
+     * and resolving it here keeps every component from having to know whether
+     * the file came with the old static site or was uploaded in the admin.
+     *
+     * @return array<string, string|null>
+     */
+    private function settings(): array
+    {
+        $settings = Setting::map();
+        $settings['logo_url'] = MediaPath::url($settings['logo_path'] ?? null);
+
+        return $settings;
     }
 }

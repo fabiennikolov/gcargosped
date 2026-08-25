@@ -7,6 +7,9 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren, useEffect, useState } from 'react';
 import '../../css/site.css';
 
+/** Shown under the logo in the footer until it is edited in the admin. */
+const FOOTER_TAGLINE = 'Вашият товар е наша грижа. Транспорт, складиране и логистика в България, Европа и Турция.';
+
 const NAV = [
     { label: 'Начало', href: '/' },
     { label: 'За нас', href: '/about' },
@@ -44,10 +47,11 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
     const phoneHref = `tel:${settings.phone_raw ?? phone.replace(/\s/g, '')}`;
 
     const title = meta?.title ?? settings.seo_title ?? 'Глобал Карго Спед';
-    // Inertia's ziggy payload carries the request URL, which is the only origin
-    // available during SSR — window does not exist there.
+    // The server sends the canonical address of this page; og:url must be the
+    // same one, or a share links somewhere the page does not claim to live.
+    // Ziggy's request URL is the fallback for a payload without it.
     const origin = (page.props.ziggy?.url ?? '').replace(/\/$/, '');
-    const absoluteUrl = `${origin}${current}`;
+    const absoluteUrl = page.props.canonical ?? `${origin}${current}`;
     const ogImage = `${origin}/assets/img/hero.webp`;
 
     return (
@@ -71,7 +75,7 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
             <header>
                 <div className="wrap">
                     <div className="navbar">
-                        <Brand siteName={settings.site_name} />
+                        <Brand siteName={settings.site_name} logo={settings.logo_url} />
 
                         <nav className="navlinks" aria-label="Основна навигация">
                             {NAV.map((item) => (
@@ -140,8 +144,8 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
                     <div className="glass foot-inner">
                         <div className="foot-grid">
                             <div className="foot-brand">
-                                <Brand siteName={settings.site_name} />
-                                <p>Вашия товар е наша грижа. Транспорт, складиране и логистика в България, Европа и Турция.</p>
+                                <Brand siteName={settings.site_name} logo={settings.logo_url} />
+                                <p>{settings.footer_tagline || FOOTER_TAGLINE}</p>
                             </div>
 
                             <div className="foot">

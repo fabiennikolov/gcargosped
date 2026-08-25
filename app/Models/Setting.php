@@ -45,4 +45,13 @@ class Setting extends Model
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
     }
+
+    /**
+     * For writes that bypass the model — a migration updating the table with a
+     * single UPDATE, for instance, which fires no Eloquent event.
+     */
+    public static function forgetCache(): void
+    {
+        Cache::forget(self::CACHE_KEY);
+    }
 }

@@ -42,6 +42,14 @@ Route::post('/track/whatsapp', WhatsappClickController::class)
 Route::get('/sitemap.xml', [PageController::class, 'sitemap'])->name('sitemap');
 
 /*
+ * robots.txt is a route rather than a file in public/ so that the Sitemap line
+ * and the canonical tags are built from the same origin. A file in public/ is
+ * served by the web server before Laravel ever sees the request, so the two
+ * cannot coexist — public/robots.txt was removed with this.
+ */
+Route::get('/robots.txt', [PageController::class, 'robots'])->name('robots');
+
+/*
  * The starter kit's own login, registration and profile screens have been
  * removed: the site is a public brochure with no customer area, and a second
  * login next to Filament's was only a way in for people who should not have

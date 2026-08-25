@@ -53,6 +53,7 @@ class ServiceForm
                     ]),
 
                 Section::make('Изображение')
+                    ->description('Снимката се показва в картата на услугата и като фон в заглавието на страницата ѝ.')
                     ->schema([
                         FileUpload::make('image')
                             ->label('Снимка')
@@ -60,8 +61,26 @@ class ServiceForm
                             ->imageEditor()
                             ->disk('public')
                             ->directory('services')
-                            ->maxSize(4096)
-                            ->helperText('Препоръчително съотношение 4:3, WebP или JPG.'),
+                            ->maxSize(12288)
+                            /*
+                             * Scaled down in the browser before it is uploaded.
+                             * A photo taken on a phone is 4000px wide and
+                             * several megabytes; the card it ends up in is
+                             * never wider than 800. Only the width is given, so
+                             * the height follows the original proportions and
+                             * nothing is cropped or letterboxed. The size limit
+                             * is generous because it applies to the file the
+                             * editor picks, before this shrinks it.
+                             */
+                            ->imageResizeTargetWidth('1600')
+                            ->imageResizeUpscale(false)
+                            ->helperText('Качете каквато и да е снимка — свива се автоматично до 1600 px по широчина. Най-добре изглежда в съотношение 4:3.'),
+
+                        TextInput::make('image_alt')
+                            ->label('ALT текст на снимката')
+                            ->maxLength(190)
+                            ->placeholder('Камион на Глобал Карго Спед товари палети')
+                            ->helperText('Не се вижда никъде на сайта — чете се само от Google и от екранните четци. Празно = ползва се заглавието на услугата.'),
                     ]),
 
                 Section::make('Показване')
