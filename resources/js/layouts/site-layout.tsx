@@ -1,6 +1,7 @@
 import Brand from '@/components/site/brand';
 import { BurgerIcon, CloseIcon, FacebookIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/site/icons';
 import WhatsappButton from '@/components/site/whatsapp-button';
+import { useGoogleAdsPageView } from '@/hooks/use-google-ads-page-view';
 import { useReveal } from '@/hooks/use-reveal';
 import type { PageMeta, SharedSiteProps } from '@/types/site';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -33,6 +34,10 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
     // Reveals the scroll-in animations; without it every .reveal stays at
     // opacity:0 and most of the page looks empty.
     useReveal(page.url);
+
+    // Tells Google Ads about the pages Inertia swaps in without a reload. Does
+    // nothing until an Ads ID is configured in the admin.
+    useGoogleAdsPageView(settings.google_ads_id, page.url);
 
     // Close the drawer on navigation and lock the body while it is open.
     useEffect(() => setMenuOpen(false), [page.url]);

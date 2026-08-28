@@ -79,6 +79,12 @@ export interface SiteSettings {
     linkedin_url?: string;
     seo_title?: string;
     seo_description?: string;
+    /** Google Ads tag ID (AW-…), already checked server-side; null until configured. */
+    google_ads_id?: string | null;
+    /** The conversion label, as typed in the admin. Use google_ads_send_to instead. */
+    google_ads_label?: string;
+    /** "AW-…/label" — what a conversion names as its destination. Null until both halves are set. */
+    google_ads_send_to?: string | null;
 }
 
 export interface NavService {
@@ -106,4 +112,16 @@ export interface Paginated<T> {
     current_page?: number;
     last_page?: number;
     total?: number;
+}
+
+declare global {
+    interface Window {
+        /**
+         * Defined synchronously by the Google tag in the root template, before
+         * React mounts, and missing altogether until an Ads ID is configured —
+         * hence every call site has to guard. Calls made before the library
+         * itself has loaded are queued on dataLayer, so they are not lost.
+         */
+        gtag?: (command: 'config' | 'event' | 'js', target: string | Date, params?: Record<string, unknown>) => void;
+    }
 }

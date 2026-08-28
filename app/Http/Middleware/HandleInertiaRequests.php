@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Support\Canonical;
+use App\Support\GoogleAds;
 use App\Support\MediaPath;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -92,6 +93,13 @@ class HandleInertiaRequests extends Middleware
     {
         $settings = Setting::map();
         $settings['logo_url'] = MediaPath::url($settings['logo_path'] ?? null);
+
+        // The Ads ID reaches the browser only after it has been checked, and
+        // the conversion target is assembled here, so nothing in the front end
+        // has to know that send_to is the ID and the label with a slash
+        // between them. Both are null until the admin fills the section in.
+        $settings['google_ads_id'] = GoogleAds::id();
+        $settings['google_ads_send_to'] = GoogleAds::sendTo();
 
         return $settings;
     }

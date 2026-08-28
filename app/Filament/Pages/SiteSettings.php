@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use App\Support\GoogleAds;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -12,6 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -40,6 +43,7 @@ class SiteSettings extends Page
         'whatsapp_number', 'whatsapp_greeting', 'whatsapp_teaser', 'whatsapp_topics',
         'inquiry_title', 'inquiry_subtitle', 'inquiry_success',
         'facebook_url', 'linkedin_url', 'seo_title', 'seo_description',
+        'google_ads_id', 'google_ads_label',
     ];
 
     public function getTitle(): string|Htmlable
@@ -321,6 +325,66 @@ class SiteSettings extends Page
                         TextInput::make('linkedin_url')->label('LinkedIn')->url()->placeholder('https://…'),
                     ])
                     ->description('Празно поле = иконата не се показва.'),
+
+                /*
+                 * The two halves of the Google Ads tag. The ID loads the tag
+                 * on every page; the label names the one conversion the site
+                 * reports, and it is reported only when a form is actually
+                 * sent — never on a page load. Both go straight into a
+                 * <script>, so both are checked against the shape Google
+                 * issues rather than trusted as typed.
+                 */
+                Section::make('Google Ads')
+                    ->description('Поставете кода от Google Ads и запазете — това е всичко. Празно ID = сайтът не зарежда никакъв Google таг.')
+                    ->collapsed()
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('google_ads_id')
+                            ->label('ID на Google тага')
+                            ->placeholder('AW-123456789')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, ?string $state): void {
+                                [$id, $label] = GoogleAds::extract($state);
+
+                                if ($id === null) {
+                                    return;
+                                }
+
+                                $set('google_ads_id', $id);
+
+                                // The whole snippet was pasted into the first
+                                // box, which is what someone with both codes on
+                                // one screen does. The label was in it.
+                                if ($label !== null) {
+                                    $set('google_ads_label', $label);
+                                }
+                            })
+                            ->regex(fn (mixed $state): ?string => filled($state) ? GoogleAds::ID_INPUT_PATTERN : null)
+                            ->validationMessages(['regex' => 'ID-то изглежда като AW-123456789.'])
+                            ->helperText('Google Ads → Цели → Google таг. Може да се постави целият код — полетата се подреждат сами.'),
+
+                        TextInput::make('google_ads_label')
+                            ->label('Етикет на реализацията')
+                            ->placeholder('AbC-D_efGhIjKlM')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Get $get, Set $set, ?string $state): void {
+                                [$id, $label] = GoogleAds::extract($state);
+
+                                if ($label !== null) {
+                                    $set('google_ads_label', $label);
+                                }
+
+                                // An ID came along with it and there is none
+                                // yet: fill it rather than make them find it
+                                // again. An ID already entered stays.
+                                if ($id !== null && blank($get('google_ads_id'))) {
+                                    $set('google_ads_id', $id);
+                                }
+                            })
+                            ->regex(fn (mixed $state): ?string => filled($state) ? GoogleAds::LABEL_INPUT_PATTERN : null)
+                            ->validationMessages(['regex' => 'Етикетът е частта след наклонената черта в send_to.'])
+                            ->helperText('От фрагмента за събитие на реализацията. Празно = тагът се зарежда, но нищо не се отчита като реализация.'),
+                    ]),
 
                 Section::make('SEO по подразбиране')
                     ->collapsed()
