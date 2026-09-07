@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnforceCanonicalUrl;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -13,6 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        /*
+         * Before anything else, including the session: www and the bare domain
+         * both answered with 200, so every page existed at two addresses and
+         * Google picked whichever it liked. This one sends the visitor — and
+         * the crawler — to the address in APP_URL with a 301.
+         */
+        $middleware->prepend(EnforceCanonicalUrl::class);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
