@@ -22,6 +22,7 @@
             $linkedinPartnerId = \App\Support\Marketing::linkedinPartnerId();
             $googleVerification = \App\Support\Marketing::googleVerification();
             $facebookVerification = \App\Support\Marketing::facebookVerification();
+            $googleTagId = $googleAdsId ?? $ga4Id;
         @endphp
 
         @if ($googleVerification)
@@ -31,13 +32,47 @@
             <meta name="facebook-domain-verification" content="{{ $facebookVerification }}">
         @endif
 
+        {{-- The vendors' libraries are a few hundred KB of script between them
+             and would compete with the first paint on a phone. So none is
+             fetched until the visitor first touches, scrolls, types or moves
+             the pointer — or after 4 s of doing none of those. Each tag below
+             defines its stub right away, and every stub queues what it is
+             given, so nothing sent before its library arrives is lost: the
+             inquiry form needs an interaction first anyway.
+
+             The URLs are written straight into string literals on purpose:
+             every ID has already been matched against its vendor's shape
+             (letters, digits and a dash at most), so none can close one. --}}
+        @if ($googleTagId || $gtmId || $metaPixelIds || $linkedinPartnerId)
+            <script>
+                (function () {
+                    var queue = [], loaded = false;
+                    var events = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
+                    function inject(src) {
+                        var s = document.createElement('script');
+                        s.async = true;
+                        s.src = src;
+                        document.head.appendChild(s);
+                    }
+                    function load() {
+                        if (loaded) return;
+                        loaded = true;
+                        events.forEach(function (e) { window.removeEventListener(e, load); });
+                        queue.forEach(inject);
+                    }
+                    window.deferTagScript = function (src) { loaded ? inject(src) : queue.push(src); };
+                    events.forEach(function (e) { window.addEventListener(e, load, { once: true, passive: true }); });
+                    setTimeout(load, 4000);
+                })();
+            </script>
+        @endif
+
         {{-- Google tag (gtag.js): one library for Google Ads and Analytics 4,
              loaded once with whichever ID is there and configured for each.
              Analytics counts the pages Inertia swaps in by itself (enhanced
              measurement, "page changes based on browser history events"); Ads
              does not, which is what useMarketingPageViews is for. --}}
-        @if ($googleAdsId || $ga4Id)
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $googleAdsId ?? $ga4Id }}"></script>
+        @if ($googleTagId)
             <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -48,15 +83,16 @@
                 @if ($ga4Id)
                 gtag('config', @js($ga4Id));
                 @endif
+                deferTagScript('https://www.googletagmanager.com/gtag/js?id={{ $googleTagId }}');
             </script>
         @endif
 
         @if ($gtmId)
-            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer',@js($gtmId));</script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+                deferTagScript('https://www.googletagmanager.com/gtm.js?id={{ $gtmId }}');
+            </script>
         @endif
 
         {{-- Meta Pixel. Every pixel in the list is initialised and every event
@@ -65,18 +101,16 @@
              page Inertia swaps in, and two mechanisms would count some twice. --}}
         @if ($metaPixelIds)
             <script>
-                !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                !function(f){if(f.fbq)return;var n=f.fbq=function(){n.callMethod?
                 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
                 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
+                n.queue=[]}(window);
                 fbq.disablePushState = true;
                 @foreach ($metaPixelIds as $pixelId)
                 fbq('init', @js($pixelId));
                 @endforeach
                 fbq('track', 'PageView');
+                deferTagScript('https://connect.facebook.net/en_US/fbevents.js');
             </script>
         @endif
 
@@ -86,14 +120,11 @@
                 _linkedin_partner_id = @js($linkedinPartnerId);
                 window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
                 window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-                (function(l) {
-                if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-                window.lintrk.q=[]}
-                var s = document.getElementsByTagName("script")[0];
-                var b = document.createElement("script");
-                b.type = "text/javascript";b.async = true;
-                b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-                s.parentNode.insertBefore(b, s);})(window.lintrk);
+                if (!window.lintrk) {
+                    window.lintrk = function (a, b) { window.lintrk.q.push([a, b]); };
+                    window.lintrk.q = [];
+                }
+                deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js');
             </script>
         @endif
 
@@ -111,8 +142,11 @@
              visitor without JavaScript still sees the whole page. --}}
         <script>document.documentElement.classList.add('js');</script>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+        {{-- No web font on purpose. The public pages set their text in the
+             system font stack (--sans in site.css), so a stylesheet from an
+             external font host would only add a render-blocking request —
+             and a slow one on a mobile connection — in front of the first
+             paint, for a font nothing uses. --}}
 
         @routes
         @viteReactRefresh

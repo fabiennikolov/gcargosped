@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
+use App\Support\ImageOptimizer;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -11,6 +12,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use App\Support\Slug;
 use Filament\Schemas\Schema;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PostForm
 {
@@ -75,7 +77,9 @@ class PostForm
                             ->imageEditor()
                             ->disk('public')
                             ->directory('posts')
-                            ->maxSize(4096),
+                            ->maxSize(12288)
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file): string => ImageOptimizer::store($file, 'public', 'posts', 1280))
+                            ->helperText('Качете каквато и да е снимка — свива се автоматично до 1280 px по широчина.'),
                     ]),
 
                 Section::make('Публикуване')

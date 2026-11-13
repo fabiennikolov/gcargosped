@@ -51,6 +51,26 @@ class MarketingTest extends TestCase
         $this->actingAs(User::factory()->create(['is_admin' => true]));
     }
 
+    /**
+     * The libraries are fetched on the first interaction, not with the page,
+     * so they never compete with the first paint; the stubs queue anything
+     * sent before they arrive.
+     */
+    public function test_no_tag_library_is_fetched_with_the_page(): void
+    {
+        Setting::put('google_ads_id', 'AW-123456789');
+        Setting::put('gtm_id', self::GTM);
+        Setting::put('meta_pixel_ids', self::PIXEL);
+        Setting::put('linkedin_partner_id', self::LINKEDIN);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('<script async src="https://www.googletagmanager.com', false)
+            ->assertSee("deferTagScript('https://connect.facebook.net/en_US/fbevents.js')", false)
+            ->assertSee("deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js')", false)
+            ->assertSee("window.addEventListener(e, load, { once: true, passive: true })", false);
+    }
+
     public function test_an_unconfigured_site_ships_no_tags(): void
     {
         $this->get('/')
@@ -58,6 +78,7 @@ class MarketingTest extends TestCase
             ->assertDontSee('googletagmanager.com', false)
             ->assertDontSee('fbevents.js', false)
             ->assertDontSee('snap.licdn.com', false)
+            ->assertDontSee('deferTagScript', false)
             ->assertDontSee('site-verification', false)
             ->assertDontSee('domain-verification', false);
     }
@@ -90,7 +111,7 @@ class MarketingTest extends TestCase
         Setting::put('gtm_id', self::GTM);
 
         $this->get('/')
-            ->assertSee("'dataLayer','".self::GTM."'", false)
+            ->assertSee("deferTagScript('https://www.googletagmanager.com/gtm.js?id=".self::GTM."')", false)
             ->assertSee('https://www.googletagmanager.com/ns.html?id='.self::GTM, false);
     }
 

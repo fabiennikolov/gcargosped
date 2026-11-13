@@ -190,7 +190,7 @@ class GoogleAdsTest extends TestCase
             ->assertOk()
             // The tag still loads with the account alone; the label belongs to
             // the conversion, not to the library.
-            ->assertSee('https://www.googletagmanager.com/gtag/js?id='.self::ID.'"', false)
+            ->assertSee("deferTagScript('https://www.googletagmanager.com/gtag/js?id=".self::ID."')", false)
             ->assertInertia(fn ($page) => $page
                 ->where('settings.google_ads_id', self::ID)
                 ->where('settings.google_ads_send_to', self::ID.'/'.self::LABEL)

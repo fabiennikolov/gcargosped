@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Services\Schemas;
 
+use App\Support\ImageOptimizer;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -9,6 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ServiceForm
 {
@@ -62,19 +64,22 @@ class ServiceForm
                             ->disk('public')
                             ->directory('services')
                             ->maxSize(12288)
+                            // Scaled and converted to WebP again on the server,
+                            // so a file that skipped the editor is shrunk too.
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file): string => ImageOptimizer::store($file, 'public', 'services', 1280, thumbWidth: 720))
                             /*
                              * Scaled down in the browser before it is uploaded.
                              * A photo taken on a phone is 4000px wide and
                              * several megabytes; the card it ends up in is
-                             * never wider than 800. Only the width is given, so
+                             * never wider than 800 (1280 leaves room for a retina screen). Only the width is given, so
                              * the height follows the original proportions and
                              * nothing is cropped or letterboxed. The size limit
                              * is generous because it applies to the file the
                              * editor picks, before this shrinks it.
                              */
-                            ->imageResizeTargetWidth('1600')
+                            ->imageResizeTargetWidth('1280')
                             ->imageResizeUpscale(false)
-                            ->helperText('Качете каквато и да е снимка — свива се автоматично до 1600 px по широчина. Най-добре изглежда в съотношение 4:3.'),
+                            ->helperText('Качете каквато и да е снимка — свива се автоматично до 1280 px по широчина. Най-добре изглежда в съотношение 4:3.'),
 
                         TextInput::make('image_alt')
                             ->label('ALT текст на снимката')

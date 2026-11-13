@@ -1,4 +1,5 @@
 import { ArrowIcon, CheckIcon } from '@/components/site/icons';
+import HeroVideo from '@/components/site/hero-video';
 import InquiryForm from '@/components/site/inquiry-form';
 import PartnerGrid from '@/components/site/partner-grid';
 import ServiceCarousel from '@/components/site/service-carousel';
@@ -97,13 +98,12 @@ export default function Home({ services, partners, meta }: Props) {
                     <img
                         className="hero-bgimg"
                         src="/assets/img/hero.webp"
+                        srcSet="/assets/img/hero-800.webp 800w, /assets/img/hero.webp 1280w"
+                        sizes="100vw"
                         alt="Камион на Глобал Карго Спед на магистрала — транспорт в Европа"
-                        fetchPriority="high"
                         decoding="async"
                     />
-                    <video className="hero-video" autoPlay muted loop playsInline preload="metadata">
-                        <source src="/assets/bridge-truck.mp4" type="video/mp4" />
-                    </video>
+                    <HeroVideo />
                     <div className="hero-scrim" />
                 </div>
 
