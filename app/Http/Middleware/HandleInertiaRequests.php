@@ -88,7 +88,7 @@ class HandleInertiaRequests extends Middleware
      * and resolving it here keeps every component from having to know whether
      * the file came with the old static site or was uploaded in the admin.
      *
-     * @return array<string, string|array<int, string>|null>
+     * @return array<string, string|bool|array<int, string>|null>
      */
     private function settings(): array
     {
@@ -111,6 +111,11 @@ class HandleInertiaRequests extends Middleware
         $settings['meta_pixel_ids'] = Marketing::metaPixelIds();
         $settings['linkedin_partner_id'] = Marketing::linkedinPartnerId();
         $settings['linkedin_lead_id'] = Marketing::linkedinLeadId();
+
+        // The cookie banner asks only when there is something to ask about.
+        // Its text is plain text, rendered as such; the link is checked.
+        $settings['tracking_consent_required'] = Marketing::trackingConfigured();
+        $settings['privacy_url'] = Marketing::privacyUrl();
 
         // Only ever needed in the <head>, which the template renders itself.
         unset($settings['google_site_verification'], $settings['facebook_domain_verification']);

@@ -97,6 +97,12 @@ export interface SiteSettings {
     linkedin_partner_id?: string | null;
     /** LinkedIn conversion reported for a sent inquiry; null unless the partner ID is set too. */
     linkedin_lead_id?: string | null;
+    /** True when any tracking tag is configured, so the cookie banner has to ask. */
+    tracking_consent_required?: boolean;
+    /** The cookie banner's text; empty falls back to the wording in the component. */
+    consent_text?: string;
+    /** Privacy policy linked from the cookie banner; http(s) only, checked server-side. */
+    privacy_url?: string | null;
 }
 
 export interface NavService {
@@ -134,9 +140,9 @@ declare global {
          * hence every call site has to guard. Calls made before the library
          * itself has loaded are queued on dataLayer, so they are not lost.
          */
-        gtag?: (command: 'config' | 'event' | 'js', target: string | Date, params?: Record<string, unknown>) => void;
+        gtag?: (command: 'config' | 'event' | 'js' | 'consent' | 'set', target: string | Date, params?: Record<string, unknown> | boolean) => void;
         /** Meta Pixel; defined by the root template only when a pixel is configured. */
-        fbq?: (command: 'track' | 'init', event: string, params?: Record<string, unknown>, options?: { eventID?: string }) => void;
+        fbq?: (command: 'track' | 'init' | 'consent', event: string, params?: Record<string, unknown>, options?: { eventID?: string }) => void;
         /** LinkedIn Insight Tag; defined only when a partner ID is configured. */
         lintrk?: (command: 'track', params: Record<string, unknown>) => void;
         /** Google's queue, shared by gtag.js and Tag Manager. */

@@ -1,8 +1,10 @@
 import Brand from '@/components/site/brand';
+import CookieBanner from '@/components/site/cookie-banner';
 import { BurgerIcon, CloseIcon, FacebookIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/site/icons';
 import WhatsappButton from '@/components/site/whatsapp-button';
 import { useMarketingPageViews } from '@/hooks/use-marketing-page-views';
 import { useReveal } from '@/hooks/use-reveal';
+import { openConsent } from '@/lib/consent';
 import type { PageMeta, SharedSiteProps } from '@/types/site';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren, useEffect, useState } from 'react';
@@ -144,6 +146,9 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
                 page={current}
             />
 
+            {/* Asks only when a tracking tag is configured in the admin. */}
+            <CookieBanner required={settings.tracking_consent_required} text={settings.consent_text} privacyUrl={settings.privacy_url} />
+
             <footer>
                 <div className="wrap">
                     <div className="glass foot-inner">
@@ -198,7 +203,19 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
                         </div>
 
                         <div className="foot-bottom">
-                            <span>© {new Date().getFullYear()} Глобал Карго Спед ЕООД. Всички права запазени.</span>
+                            <span>
+                                © {new Date().getFullYear()} Глобал Карго Спед ЕООД. Всички права запазени.
+                                {/* The way back to the banner, for a visitor
+                                    who wants to change their answer. */}
+                                {settings.tracking_consent_required && (
+                                    <>
+                                        {' · '}
+                                        <button type="button" className="cookie-link" onClick={openConsent}>
+                                            Бисквитки
+                                        </button>
+                                    </>
+                                )}
+                            </span>
                             <div className="socials">
                                 {settings.facebook_url && (
                                     <a href={settings.facebook_url} aria-label="Facebook" rel="noopener noreferrer" target="_blank">

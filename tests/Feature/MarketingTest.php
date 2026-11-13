@@ -66,9 +66,108 @@ class MarketingTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertDontSee('<script async src="https://www.googletagmanager.com', false)
-            ->assertSee("deferTagScript('https://connect.facebook.net/en_US/fbevents.js')", false)
-            ->assertSee("deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js')", false)
+            ->assertSee("deferTagScript('https://connect.facebook.net/en_US/fbevents.js', true)", false)
+            ->assertSee("deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js', true)", false)
             ->assertSee("window.addEventListener(e, load, { once: true, passive: true })", false);
+    }
+
+    /*
+     * GDPR. Google's tags run under Consent Mode, denied until the visitor
+     * accepts; the default must be on the page before any config or
+     * container, or the first hits go out with cookies.
+     */
+    public function test_google_starts_with_consent_denied(): void
+    {
+        Setting::put('google_ads_id', 'AW-123456789');
+        Setting::put('gtm_id', self::GTM);
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $default = strpos($html, "gtag('consent', 'default'");
+        $this->assertNotFalse($default);
+        $this->assertStringContainsString("window.tagConsent === 'granted' ? 'granted' : 'denied'", $html);
+        $this->assertLessThan(strpos($html, "gtag('config'"), $default);
+        $this->assertLessThan(strpos($html, 'gtm.js?id='), $default);
+    }
+
+    /** Meta and LinkedIn have no consent mode: no consent, no library. */
+    public function test_meta_and_linkedin_wait_for_consent(): void
+    {
+        Setting::put('meta_pixel_ids', self::PIXEL);
+        Setting::put('linkedin_partner_id', self::LINKEDIN);
+
+        $this->get('/')
+            ->assertSee("deferTagScript('https://connect.facebook.net/en_US/fbevents.js', true)", false)
+            ->assertSee("deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js', true)", false)
+            ->assertSee("if (window.tagConsent === 'granted') gated.splice(0).forEach(inject);", false);
+    }
+
+    /** A visitor without JavaScript cannot consent, so is not tracked. */
+    public function test_no_tracking_pixel_fires_without_javascript(): void
+    {
+        Setting::put('gtm_id', self::GTM);
+        Setting::put('meta_pixel_ids', self::PIXEL);
+        Setting::put('linkedin_partner_id', self::LINKEDIN);
+
+        $this->get('/')
+            ->assertDontSee('ns.html?id=', false)
+            ->assertDontSee('facebook.com/tr?', false)
+            ->assertDontSee('px.ads.linkedin.com', false);
+    }
+
+    /** The banner asks only when there is something to ask about. */
+    #[DataProvider('trackingTags')]
+    public function test_the_banner_is_required_by_any_tracking_tag(string $key, string $value): void
+    {
+        $this->get('/')->assertInertia(fn ($page) => $page->where('settings.tracking_consent_required', false));
+
+        Setting::put($key, $value);
+
+        $this->get('/')->assertInertia(fn ($page) => $page->where('settings.tracking_consent_required', true));
+    }
+
+    /** @return array<string, array{string, string}> */
+    public static function trackingTags(): array
+    {
+        return [
+            'google ads' => ['google_ads_id', 'AW-123456789'],
+            'ga4' => ['ga4_id', self::GA4],
+            'gtm' => ['gtm_id', self::GTM],
+            'meta' => ['meta_pixel_ids', self::PIXEL],
+            'linkedin' => ['linkedin_partner_id', self::LINKEDIN],
+        ];
+    }
+
+    /** Verification tags set no cookie, so they ask for no consent. */
+    public function test_verification_alone_needs_no_banner(): void
+    {
+        Setting::put('google_site_verification', self::GOOGLE_VERIFICATION);
+
+        $this->get('/')
+            ->assertDontSee('deferTagScript', false)
+            ->assertInertia(fn ($page) => $page->where('settings.tracking_consent_required', false));
+    }
+
+    public function test_the_banner_text_and_privacy_link_are_editable(): void
+    {
+        $this->admin();
+
+        Livewire::test(Marketing::class)
+            ->fillForm(['consent_text' => 'Ползваме бисквитки.', 'privacy_url' => 'https://gcargosped.com/privacy'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->get('/')->assertInertia(fn ($page) => $page
+            ->where('settings.consent_text', 'Ползваме бисквитки.')
+            ->where('settings.privacy_url', 'https://gcargosped.com/privacy'));
+    }
+
+    /** The link ends up in an href; javascript: is a URL too. */
+    public function test_a_non_http_privacy_link_is_never_shared(): void
+    {
+        Setting::put('privacy_url', 'javascript:alert(1)');
+
+        $this->get('/')->assertInertia(fn ($page) => $page->where('settings.privacy_url', null));
     }
 
     public function test_an_unconfigured_site_ships_no_tags(): void
@@ -106,13 +205,12 @@ class MarketingTest extends TestCase
         $this->assertStringContainsString("gtag('config', '".self::GA4."')", $html);
     }
 
-    public function test_tag_manager_is_loaded_with_its_noscript_frame(): void
+    public function test_tag_manager_is_loaded(): void
     {
         Setting::put('gtm_id', self::GTM);
 
         $this->get('/')
-            ->assertSee("deferTagScript('https://www.googletagmanager.com/gtm.js?id=".self::GTM."')", false)
-            ->assertSee('https://www.googletagmanager.com/ns.html?id='.self::GTM, false);
+            ->assertSee("deferTagScript('https://www.googletagmanager.com/gtm.js?id=".self::GTM."')", false);
     }
 
     public function test_every_meta_pixel_is_initialised(): void
@@ -123,7 +221,6 @@ class MarketingTest extends TestCase
             ->assertSee('fbevents.js', false)
             ->assertSee("fbq('init', '".self::PIXEL."')", false)
             ->assertSee("fbq('init', '".self::PIXEL_2."')", false)
-            ->assertSee('facebook.com/tr?id='.self::PIXEL_2.'&ev=PageView', false)
             ->assertInertia(fn ($page) => $page->where('settings.meta_pixel_ids', [self::PIXEL, self::PIXEL_2]));
     }
 
@@ -134,7 +231,6 @@ class MarketingTest extends TestCase
 
         $this->get('/')
             ->assertSee('_linkedin_partner_id = \''.self::LINKEDIN.'\'', false)
-            ->assertSee('px.ads.linkedin.com/collect/?pid='.self::LINKEDIN, false)
             ->assertInertia(fn ($page) => $page->where('settings.linkedin_lead_id', self::LINKEDIN_LEAD));
     }
 

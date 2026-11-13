@@ -23,6 +23,7 @@
             $googleVerification = \App\Support\Marketing::googleVerification();
             $facebookVerification = \App\Support\Marketing::facebookVerification();
             $googleTagId = $googleAdsId ?? $ga4Id;
+            $trackingConfigured = \App\Support\Marketing::trackingConfigured();
         @endphp
 
         @if ($googleVerification)
@@ -40,13 +41,30 @@
              given, so nothing sent before its library arrives is lost: the
              inquiry form needs an interaction first anyway.
 
+             Consent (GDPR): the choice made in the cookie banner is read here,
+             before any tag, from localStorage — resources/js/lib/consent.ts
+             writes it. Google's tags load either way, under Consent Mode with
+             everything denied until the visitor accepts, so they set no
+             cookies and send only cookieless pings. Meta and LinkedIn have
+             nothing of the kind, so their libraries ("gated") are not fetched
+             at all without consent.
+
              The URLs are written straight into string literals on purpose:
              every ID has already been matched against its vendor's shape
              (letters, digits and a dash at most), so none can close one. --}}
-        @if ($googleTagId || $gtmId || $metaPixelIds || $linkedinPartnerId)
+        @if ($trackingConfigured)
             <script>
                 (function () {
-                    var queue = [], loaded = false;
+                    var consent = null;
+                    try {
+                        var stored = JSON.parse(localStorage.getItem('gcs-consent') || 'null');
+                        if (stored && stored.v === 1 && Date.now() - stored.t < 180 * 864e5) {
+                            consent = stored.granted === true ? 'granted' : 'denied';
+                        }
+                    } catch (e) {}
+                    window.tagConsent = consent;
+
+                    var queue = [], gated = [], loaded = false;
                     var events = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
                     function inject(src) {
                         var s = document.createElement('script');
@@ -54,16 +72,41 @@
                         s.src = src;
                         document.head.appendChild(s);
                     }
+                    function flush() {
+                        if (!loaded) return;
+                        queue.splice(0).forEach(inject);
+                        if (window.tagConsent === 'granted') gated.splice(0).forEach(inject);
+                    }
                     function load() {
                         if (loaded) return;
                         loaded = true;
                         events.forEach(function (e) { window.removeEventListener(e, load); });
-                        queue.forEach(inject);
+                        flush();
                     }
-                    window.deferTagScript = function (src) { loaded ? inject(src) : queue.push(src); };
+                    window.deferTagScript = function (src, needsConsent) {
+                        (needsConsent ? gated : queue).push(src);
+                        flush();
+                    };
+                    window.releaseGatedTags = flush;
                     events.forEach(function (e) { window.addEventListener(e, load, { once: true, passive: true }); });
                     setTimeout(load, 4000);
                 })();
+            </script>
+        @endif
+
+        {{-- Google Consent Mode v2: the default has to be set before any
+             config or Tag Manager container, so it comes first. --}}
+        @if ($googleTagId || $gtmId)
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                (function (c) {
+                    gtag('consent', 'default', {
+                        ad_storage: c, ad_user_data: c, ad_personalization: c, analytics_storage: c,
+                        wait_for_update: 500
+                    });
+                    gtag('set', 'ads_data_redaction', c === 'denied');
+                })(window.tagConsent === 'granted' ? 'granted' : 'denied');
             </script>
         @endif
 
@@ -74,8 +117,6 @@
              does not, which is what useMarketingPageViews is for. --}}
         @if ($googleTagId)
             <script>
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 @if ($googleAdsId)
                 gtag('config', @js($googleAdsId));
@@ -89,7 +130,6 @@
 
         @if ($gtmId)
             <script>
-                window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
                 deferTagScript('https://www.googletagmanager.com/gtm.js?id={{ $gtmId }}');
             </script>
@@ -110,7 +150,7 @@
                 fbq('init', @js($pixelId));
                 @endforeach
                 fbq('track', 'PageView');
-                deferTagScript('https://connect.facebook.net/en_US/fbevents.js');
+                deferTagScript('https://connect.facebook.net/en_US/fbevents.js', true);
             </script>
         @endif
 
@@ -124,7 +164,7 @@
                     window.lintrk = function (a, b) { window.lintrk.q.push([a, b]); };
                     window.lintrk.q = [];
                 }
-                deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js');
+                deferTagScript('https://snap.licdn.com/li.lms-analytics/insight.min.js', true);
             </script>
         @endif
 
@@ -154,17 +194,9 @@
         @inertiaHead
     </head>
     <body class="font-sans antialiased">
-        {{-- The no-JavaScript halves of the tags above. --}}
-        @if ($gtmId)
-            <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ $gtmId }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        @endif
-        @foreach ($metaPixelIds as $pixelId)
-            <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id={{ $pixelId }}&ev=PageView&noscript=1"></noscript>
-        @endforeach
-        @if ($linkedinPartnerId)
-            <noscript><img height="1" width="1" style="display:none" alt="" src="https://px.ads.linkedin.com/collect/?pid={{ $linkedinPartnerId }}&fmt=gif"></noscript>
-        @endif
-
+        {{-- No <noscript> pixels on purpose: a visitor without JavaScript
+             never sees the cookie banner, so has never consented to being
+             tracked, and a pixel that fires anyway would do exactly that. --}}
         @inertia
     </body>
 </html>

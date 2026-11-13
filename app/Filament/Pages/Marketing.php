@@ -47,6 +47,7 @@ class Marketing extends Page
         'meta_pixel_ids',
         'linkedin_partner_id', 'linkedin_lead_id',
         'google_site_verification', 'facebook_domain_verification',
+        'consent_text', 'privacy_url',
     ];
 
     public function getTitle(): string|Htmlable
@@ -201,6 +202,27 @@ class Marketing extends Page
                             ->placeholder('12345678')
                             ->validationMessages(['regex' => 'ID-то на реализацията е само цифри.'])
                             ->helperText('По желание. Отчита се, когато запитване е изпратено.'),
+                    ]),
+
+                /*
+                 * Shown only while at least one tracking tag above is filled
+                 * in: with none, there is nothing to ask consent for.
+                 */
+                Section::make('Банер за бисквитки')
+                    ->description('Показва се, само ако е попълнен поне един таг за проследяване по-горе. Докато посетителят не натисне „Приемам“, Google работи без бисквитки, а Meta и LinkedIn изобщо не се зареждат.')
+                    ->schema([
+                        Textarea::make('consent_text')
+                            ->label('Текст на банера')
+                            ->rows(3)
+                            ->maxLength(400)
+                            ->placeholder('Използваме бисквитки, за да измерваме посещенията и рекламите си. Можете да откажете — сайтът работи и без тях.')
+                            ->helperText('Празно = показва се текстът в сивото.'),
+
+                        TextInput::make('privacy_url')
+                            ->label('Линк към политиката за поверителност')
+                            ->url()
+                            ->placeholder('https://gcargosped.com/…')
+                            ->helperText('По желание. Показва се като „Научете повече“ в банера.'),
                     ]),
 
                 Section::make('Потвърждаване на домейна')

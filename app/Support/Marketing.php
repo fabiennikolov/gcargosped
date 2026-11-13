@@ -89,6 +89,31 @@ class Marketing
         return self::strict(Setting::get('linkedin_lead_id'), self::LINKEDIN_CONVERSION_PATTERN);
     }
 
+    /**
+     * Whether anything that tracks a visitor is on the page — and so whether
+     * the cookie banner has to ask. The verification meta tags set no cookie
+     * and send nothing, so they do not count.
+     */
+    public static function trackingConfigured(): bool
+    {
+        return GoogleAds::id() !== null
+            || self::ga4Id() !== null
+            || self::gtmId() !== null
+            || self::metaPixelIds() !== []
+            || self::linkedinPartnerId() !== null;
+    }
+
+    /**
+     * The privacy policy the cookie banner links to, or null. Only an http(s)
+     * address is rendered: it ends up in an href, and javascript: is a URL too.
+     */
+    public static function privacyUrl(): ?string
+    {
+        $url = trim((string) Setting::get('privacy_url'));
+
+        return preg_match('#^https?://[^\s"\'<>]+$#i', $url) === 1 ? $url : null;
+    }
+
     public static function googleVerification(): ?string
     {
         return self::strict(Setting::get('google_site_verification'), self::GOOGLE_VERIFICATION_PATTERN);
