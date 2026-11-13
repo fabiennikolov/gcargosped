@@ -1,7 +1,7 @@
 import Brand from '@/components/site/brand';
 import { BurgerIcon, CloseIcon, FacebookIcon, LinkedInIcon, MailIcon, PhoneIcon, PinIcon } from '@/components/site/icons';
 import WhatsappButton from '@/components/site/whatsapp-button';
-import { useGoogleAdsPageView } from '@/hooks/use-google-ads-page-view';
+import { useMarketingPageViews } from '@/hooks/use-marketing-page-views';
 import { useReveal } from '@/hooks/use-reveal';
 import type { PageMeta, SharedSiteProps } from '@/types/site';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -35,9 +35,9 @@ export default function SiteLayout({ meta, children }: PropsWithChildren<Props>)
     // opacity:0 and most of the page looks empty.
     useReveal(page.url);
 
-    // Tells Google Ads about the pages Inertia swaps in without a reload. Does
-    // nothing until an Ads ID is configured in the admin.
-    useGoogleAdsPageView(settings.google_ads_id, page.url);
+    // Tells Google Ads and Meta about the pages Inertia swaps in without a
+    // reload. Does nothing until they are configured in the admin.
+    useMarketingPageViews(settings, page.url);
 
     // Close the drawer on navigation and lock the body while it is open.
     useEffect(() => setMenuOpen(false), [page.url]);

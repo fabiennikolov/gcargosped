@@ -1,6 +1,7 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useEffect, type FormEvent, type ReactNode } from 'react';
 import { CheckIcon } from './icons';
+import { reportLead } from '@/lib/marketing';
 import type { SharedSiteProps } from '@/types/site';
 
 interface Props {
@@ -55,17 +56,6 @@ const CITIES = [
 
 const OTHER = 'other';
 
-/**
- * Inquiries already reported to Google Ads, so one lead is counted once.
- *
- * Module-level rather than a ref: React can remount this component while the
- * thank-you card is on screen — a re-render in development's strict mode, a
- * navigation back to the same page — and every one of those would otherwise
- * send the conversion again. The id is the inquiry's own, so it also rides
- * along as transaction_id and Google drops a duplicate that slips past this.
- */
-const reportedInquiries = new Set<number>();
-
 export default function InquiryForm({ source, variant, serviceId }: Props) {
     const page = usePage<SharedSiteProps>();
     const { settings } = page.props;
@@ -86,7 +76,8 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
     });
 
     /*
-     * The conversion, and the only place one is sent. It is deliberately tied
+     * The lead, and the only place one is reported — to every platform
+     * configured in the admin (see lib/marketing). It is deliberately tied
      * to the thank-you card rather than to the submit button or to a page
      * load: the button fires on a request that validation can still reject,
      * and a page load is somebody reading, not somebody asking for an offer.
@@ -95,19 +86,11 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
      * a lead it is only drawing the HTML for.
      */
     useEffect(() => {
-        const sendTo = settings.google_ads_send_to;
-
-        if (!flash?.ok || !sendTo || reportedInquiries.has(flash.id)) {
-            return;
+        if (flash?.ok) {
+            reportLead(settings, flash.id, source);
         }
-
-        reportedInquiries.add(flash.id);
-
-        window.gtag?.('event', 'conversion', {
-            send_to: sendTo,
-            transaction_id: String(flash.id),
-        });
-    }, [flash?.ok, flash?.id, settings.google_ads_send_to]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [flash?.ok, flash?.id]);
 
     function submit(event: FormEvent) {
         event.preventDefault();

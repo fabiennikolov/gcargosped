@@ -85,6 +85,16 @@ export interface SiteSettings {
     google_ads_label?: string;
     /** "AW-…/label" — what a conversion names as its destination. Null until both halves are set. */
     google_ads_send_to?: string | null;
+    /** Google Analytics 4 measurement ID (G-…), checked server-side; null until configured. */
+    ga4_id?: string | null;
+    /** Google Tag Manager container (GTM-…); null until configured. */
+    gtm_id?: string | null;
+    /** Meta pixel IDs, checked server-side; empty until configured. */
+    meta_pixel_ids?: string[];
+    /** LinkedIn Insight Tag partner ID; null until configured. */
+    linkedin_partner_id?: string | null;
+    /** LinkedIn conversion reported for a sent inquiry; null unless the partner ID is set too. */
+    linkedin_lead_id?: string | null;
 }
 
 export interface NavService {
@@ -123,5 +133,11 @@ declare global {
          * itself has loaded are queued on dataLayer, so they are not lost.
          */
         gtag?: (command: 'config' | 'event' | 'js', target: string | Date, params?: Record<string, unknown>) => void;
+        /** Meta Pixel; defined by the root template only when a pixel is configured. */
+        fbq?: (command: 'track' | 'init', event: string, params?: Record<string, unknown>, options?: { eventID?: string }) => void;
+        /** LinkedIn Insight Tag; defined only when a partner ID is configured. */
+        lintrk?: (command: 'track', params: Record<string, unknown>) => void;
+        /** Google's queue, shared by gtag.js and Tag Manager. */
+        dataLayer?: unknown[];
     }
 }

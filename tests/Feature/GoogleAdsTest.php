@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Pages\SiteSettings;
+use App\Filament\Pages\Marketing;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Models\User;
@@ -218,7 +218,7 @@ class GoogleAdsTest extends TestCase
 
         $snippet = "<!-- Event snippet -->\n<script>\n  gtag('event', 'conversion', {'send_to': '".self::ID.'/'.self::LABEL."'});\n</script>";
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->set('data.google_ads_id', $snippet)
             ->assertSet('data.google_ads_id', self::ID)
             ->assertSet('data.google_ads_label', self::LABEL)
@@ -236,7 +236,7 @@ class GoogleAdsTest extends TestCase
 
         $snippet = '<script async src="https://www.googletagmanager.com/gtag/js?id='.self::ID.'"></script>';
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->set('data.google_ads_id', $snippet)
             ->assertSet('data.google_ads_id', self::ID)
             ->call('save')
@@ -250,7 +250,7 @@ class GoogleAdsTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->set('data.google_ads_label', self::ID.'/'.self::LABEL)
             ->assertSet('data.google_ads_id', self::ID)
             ->assertSet('data.google_ads_label', self::LABEL)
@@ -265,7 +265,7 @@ class GoogleAdsTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->fillForm(['google_ads_id' => self::ID, 'google_ads_label' => self::LABEL])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -279,7 +279,7 @@ class GoogleAdsTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->fillForm(['google_ads_id' => 'AW 123456789'])
             ->call('save')
             ->assertHasFormErrors(['google_ads_id']);
@@ -290,7 +290,7 @@ class GoogleAdsTest extends TestCase
     {
         $this->actingAs(User::factory()->create(['is_admin' => true]));
 
-        Livewire::test(SiteSettings::class)
+        Livewire::test(Marketing::class)
             ->fillForm(['google_ads_id' => '', 'google_ads_label' => ''])
             ->call('save')
             ->assertHasNoFormErrors();

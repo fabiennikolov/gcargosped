@@ -6,6 +6,7 @@ use App\Models\Service;
 use App\Models\Setting;
 use App\Support\Canonical;
 use App\Support\GoogleAds;
+use App\Support\Marketing;
 use App\Support\MediaPath;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -87,7 +88,7 @@ class HandleInertiaRequests extends Middleware
      * and resolving it here keeps every component from having to know whether
      * the file came with the old static site or was uploaded in the admin.
      *
-     * @return array<string, string|null>
+     * @return array<string, string|array<int, string>|null>
      */
     private function settings(): array
     {
@@ -100,6 +101,19 @@ class HandleInertiaRequests extends Middleware
         // between them. Both are null until the admin fills the section in.
         $settings['google_ads_id'] = GoogleAds::id();
         $settings['google_ads_send_to'] = GoogleAds::sendTo();
+
+        // The rest of the tracking codes, the same way: the browser gets the
+        // checked value or null, never what was typed. The front end needs
+        // them to report a lead and the pages Inertia swaps in; the tags
+        // themselves are rendered by the root template.
+        $settings['ga4_id'] = Marketing::ga4Id();
+        $settings['gtm_id'] = Marketing::gtmId();
+        $settings['meta_pixel_ids'] = Marketing::metaPixelIds();
+        $settings['linkedin_partner_id'] = Marketing::linkedinPartnerId();
+        $settings['linkedin_lead_id'] = Marketing::linkedinLeadId();
+
+        // Only ever needed in the <head>, which the template renders itself.
+        unset($settings['google_site_verification'], $settings['facebook_domain_verification']);
 
         return $settings;
     }
