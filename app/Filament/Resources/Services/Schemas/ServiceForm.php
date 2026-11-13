@@ -86,10 +86,6 @@ class ServiceForm
                 Section::make('Показване')
                     ->columns(3)
                     ->schema([
-                        Toggle::make('is_main')
-                            ->label('Основна услуга')
-                            ->helperText('Основните са на /service/…, останалите на /sub-services/…'),
-
                         Toggle::make('is_published')
                             ->label('Публикувана')
                             ->default(true),
