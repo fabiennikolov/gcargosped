@@ -19,7 +19,7 @@ export function PhotoCard({ service, reveal = true }: { service: ServiceCard; re
         <Link className={reveal ? 'subphoto reveal' : 'subphoto'} href={service.url}>
             {/* The ALT text written in the admin, falling back to the title —
                 either way it is read, never drawn next to the photo. */}
-            {service.image && <img src={service.image} alt={service.imageAlt || service.title} loading="lazy" decoding="async" />}
+            {service.image && <img src={service.imageThumb || service.image} alt={service.imageAlt || service.title} loading="lazy" decoding="async" />}
             <h3>{service.title}</h3>
             <span className="go">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">

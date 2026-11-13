@@ -3,6 +3,8 @@ export interface ServiceCard {
     title: string;
     subtitle: string | null;
     image: string | null;
+    /** Small copy for listing cards; falls back to `image` when absent. */
+    imageThumb?: string | null;
     /** Written in the admin, never drawn on the page — falls back to the title. */
     imageAlt?: string | null;
     icon: string | null;

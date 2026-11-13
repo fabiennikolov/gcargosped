@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Service;
+use App\Support\MediaPath;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,6 +23,7 @@ class ServiceCardResource extends JsonResource
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'image' => $this->image_url,
+            'imageThumb' => MediaPath::thumbUrl($this->image),
             'imageAlt' => $this->image_alt,
             'icon' => $this->icon_svg,
             'isMain' => $this->is_main,

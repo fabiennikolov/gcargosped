@@ -17,12 +17,32 @@
              appears. See App\Support\GoogleAds. --}}
         @php($googleAdsId = \App\Support\GoogleAds::id())
         @if ($googleAdsId)
-            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $googleAdsId }}"></script>
+            {{-- gtag.js is 160 KB that runs for half a second on a phone. It is
+                 fetched on the visitor's first touch, scroll, key press or
+                 pointer move — or after 4 s of doing none of those — so it never
+                 competes with the first paint. The gtag() stub below queues
+                 anything sent before it arrives, and the form interacts first,
+                 so the inquiry conversion is still reported. --}}
             <script>
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', @js($googleAdsId));
+                (function () {
+                    var loaded = false;
+                    var events = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
+                    function load() {
+                        if (loaded) return;
+                        loaded = true;
+                        events.forEach(function (e) { window.removeEventListener(e, load); });
+                        var s = document.createElement('script');
+                        s.async = true;
+                        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + @js($googleAdsId);
+                        document.head.appendChild(s);
+                    }
+                    events.forEach(function (e) { window.addEventListener(e, load, { once: true, passive: true }); });
+                    setTimeout(load, 4000);
+                })();
             </script>
         @endif
 
@@ -40,8 +60,11 @@
              visitor without JavaScript still sees the whole page. --}}
         <script>document.documentElement.classList.add('js');</script>
 
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+        {{-- No web font on purpose. The public pages set their text in the
+             system font stack (--sans in site.css), so a stylesheet from an
+             external font host would only add a render-blocking request —
+             and a slow one on a mobile connection — in front of the first
+             paint, for a font nothing uses. --}}
 
         @routes
         @viteReactRefresh

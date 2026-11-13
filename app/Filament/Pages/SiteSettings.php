@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use App\Support\GoogleAds;
+use App\Support\ImageOptimizer;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -18,6 +19,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 /**
  * A single form over the key/value settings table — phone, e-mail, address and
@@ -254,9 +256,10 @@ class SiteSettings extends Page
                             ->image()
                             ->disk('public')
                             ->directory('branding')
-                            ->maxSize(2048)
+                            ->maxSize(12288)
+                            ->saveUploadedFileUsing(fn (TemporaryUploadedFile $file): string => ImageOptimizer::store($file, 'public', 'branding', 400))
                             ->imagePreviewHeight('80')
-                            ->helperText('PNG, WebP или SVG. Най-добре квадратно и поне 200×200 px — показва се на 62 px.'),
+                            ->helperText('PNG, WebP или SVG. Най-добре квадратно и поне 200×200 px — показва се на 62 px. По-големите снимки се свиват автоматично.'),
                     ]),
 
                 Section::make('Начална страница')
