@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Inquiries\Schemas;
 
 use App\Models\Inquiry;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -35,6 +36,21 @@ class InquiryForm
                         Textarea::make('message')
                             ->label('Съобщение')
                             ->rows(5)
+                            ->columnSpanFull(),
+
+                        Repeater::make('extra')
+                            ->label('Други полета от формата')
+                            ->schema([
+                                TextInput::make('label')->label('Поле'),
+                                TextInput::make('value')->label('Отговор'),
+                            ])
+                            ->columns(2)
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                            ->visible(fn (?Inquiry $record) => filled($record?->extra))
                             ->columnSpanFull(),
                     ]),
 

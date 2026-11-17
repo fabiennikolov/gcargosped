@@ -6,6 +6,7 @@ use App\Models\Service;
 use App\Models\Setting;
 use App\Support\Canonical;
 use App\Support\GoogleAds;
+use App\Support\InquiryForms;
 use App\Support\Marketing;
 use App\Support\MediaPath;
 use Illuminate\Foundation\Inspiring;
@@ -68,6 +69,12 @@ class HandleInertiaRequests extends Middleware
                 'mainServices' => Service::published()->main()->orderBy('sort_order')
                     ->get(['slug', 'title', 'is_main'])
                     ->map(fn (Service $s) => ['title' => $s->title, 'url' => $s->url]),
+            ],
+
+            // The inquiry forms as arranged in the admin (Форми).
+            'forms' => fn () => [
+                'lead' => InquiryForms::forFrontend('lead'),
+                'offer' => InquiryForms::forFrontend('offer'),
             ],
 
             'flash' => [

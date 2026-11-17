@@ -6,6 +6,7 @@ use App\Http\Requests\StoreInquiryRequest;
 use App\Mail\InquiryReceived;
 use App\Models\Inquiry;
 use App\Models\Setting;
+use App\Support\InquiryForms;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -18,8 +19,14 @@ class InquiryController extends Controller
 
     public function store(StoreInquiryRequest $request): RedirectResponse
     {
+        $source = $request->validated('source');
+        $extra = InquiryForms::extraAnswers($source, (array) $request->validated('extra', []));
+
         $inquiry = Inquiry::create([
-            ...$request->safe()->except('website'),
+            ...$request->safe()->only(InquiryForms::builtinKeys($source)),
+            'source' => $source,
+            'service_id' => $request->validated('service_id'),
+            'extra' => $extra === [] ? null : $extra,
             'ip' => $request->ip(),
         ]);
 

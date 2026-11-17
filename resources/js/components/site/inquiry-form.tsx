@@ -1,5 +1,5 @@
 import { reportLead } from '@/lib/marketing';
-import type { SharedSiteProps } from '@/types/site';
+import type { FormField, SharedSiteProps } from '@/types/site';
 import { useForm, usePage } from '@inertiajs/react';
 import { useEffect, type FormEvent, type ReactNode } from 'react';
 import { CheckIcon } from './icons';
@@ -9,8 +9,10 @@ interface Props {
     source: 'offer' | 'contact' | 'service';
 
     /**
-     * `lead` is the compact card in the hero — name, phone, e-mail only.
-     * `offer` is the full quote form with route and cargo type.
+     * `lead` is the compact card in the hero and on service pages; `offer` is
+     * the full quote form on /contact. Which fields each one shows, in which
+     * order and with which wording is set in the admin (Форми) and arrives in
+     * the shared `forms` prop.
      */
     variant: 'lead' | 'offer';
 
@@ -28,8 +30,7 @@ interface Props {
 const DEFAULT_TITLE = 'Изпрати запитване';
 const DEFAULT_SUBTITLE = 'Оставете данни и ще ви потърсим с оферта.';
 
-/** The cargo types the original select offered, in the same order. */
-const CARGO_TYPES = ['Кола / Автомобил', 'Палет', 'Ремарке', 'Кашон / Каса', 'Машина / Оборудване', 'Групажен товар', 'Метали (гондола)'];
+const DEFAULT_BUTTON = { lead: 'Свържете се с мен', offer: 'Изпрати запитване' };
 
 const CITIES = [
     'София',
@@ -46,35 +47,63 @@ const CITIES = [
     'Солун, Гърция',
 ];
 
-/** Suggestions for the packaging field; anything else can be typed. */
-const PACKAGING = ['Палети', 'Кашони', 'Каси', 'Бъчви', 'Чували', 'Биг бег', 'Рулони', 'Без опаковка'];
+const FREQUENCIES = [
+    { value: 'one_time', label: 'Еднократен' },
+    { value: 'regular', label: 'Редовен' },
+];
 
 const OTHER = 'other';
+
+/** Fallback messages for fields whose server error is not specific. */
+const FALLBACK_ERRORS: Record<string, string> = {
+    name: 'Моля, въведете име.',
+    phone: 'Моля, въведете валиден телефон.',
+    email: 'Моля, проверете имейла.',
+};
+
+const AUTOCOMPLETE: Record<string, string> = { name: 'name', phone: 'tel', email: 'email' };
+
+/** Consecutive half-width fields share a row; everything else gets its own. */
+function layout(fields: FormField[]): FormField[][] {
+    const rows: FormField[][] = [];
+
+    for (const field of fields) {
+        const last = rows[rows.length - 1];
+
+        if (field.half && last && last.length === 1 && last[0].half) {
+            last.push(field);
+        } else {
+            rows.push([field]);
+        }
+    }
+
+    return rows;
+}
+
+type FormData = Record<string, string | number | null | Record<string, string | boolean>>;
 
 export default function InquiryForm({ source, variant, serviceId }: Props) {
     const page = usePage<SharedSiteProps>();
     const { settings } = page.props;
+    const config = page.props.forms?.[variant] ?? { fields: [], button: null };
     const flash = page.props.flash?.inquiry;
 
-    const form = useForm({
-        name: '',
-        phone: '',
-        email: '',
-        cargo_type: '',
-        cargo_other: '',
-        cargo_quantity: '',
-        cargo_packaging: '',
-        cargo_dimensions: '',
-        cargo_weight: '',
-        origin: '',
-        destination: '',
-        loading_date: '',
-        frequency: '',
-        message: '',
+    const initial: FormData = {
         source,
         service_id: serviceId ?? null,
         website: '',
-    });
+        cargo_other: '',
+        extra: {},
+    };
+    for (const field of config.fields) {
+        if (field.builtin) {
+            initial[field.key] = '';
+        }
+    }
+
+    const form = useForm<FormData>(initial);
+    const errors = form.errors as Record<string, string | undefined>;
+    const extra = (form.data.extra ?? {}) as Record<string, string | boolean>;
 
     /*
      * The lead, and the only place one is reported — to every platform
@@ -98,11 +127,12 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
 
         // transform() returns void in this version, so it is applied first and
         // post() called separately.
-        form.transform((data) => ({
-            ...data,
+        form.transform((data) => {
+            const { cargo_other, ...rest } = data;
+
             // "Друго…" sends the typed description rather than the sentinel.
-            cargo_type: data.cargo_type === OTHER ? data.cargo_other : data.cargo_type,
-        }));
+            return rest.cargo_type === OTHER ? { ...rest, cargo_type: cargo_other } : rest;
+        });
 
         form.post('/inquiries', {
             preserveScroll: true,
@@ -122,86 +152,160 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
         );
     }
 
-    // The stylesheet reveals .errmsg through `.input.err ~ .errmsg`, so the
-    // error state has to sit on the input itself.
-    const cls = (field: string) => (form.errors[field as keyof typeof form.errors] ? 'input err' : 'input');
+    const errorKey = (field: FormField) => (field.builtin ? field.key : `extra.${field.key}`);
 
-    const field = (
-        name:
-            | 'name'
-            | 'phone'
-            | 'email'
-            | 'origin'
-            | 'destination'
-            | 'cargo_quantity'
-            | 'cargo_packaging'
-            | 'cargo_dimensions'
-            | 'cargo_weight'
-            | 'loading_date',
-        label: string,
-        required: boolean,
-        input: ReactNode,
-        fallbackError: string,
-    ) => (
-        <div className="field">
-            <label htmlFor={`${name}-${source}`}>
-                {label} {required && <span className="req">*</span>}
-            </label>
-            {input}
-            <div className="errmsg">{form.errors[name] ?? fallbackError}</div>
-        </div>
-    );
+    const value = (field: FormField): string => {
+        const raw = field.builtin ? form.data[field.key] : extra[field.key];
 
-    const nameField = field(
-        'name',
-        'Име',
-        true,
-        <input
-            id={`name-${source}`}
-            className={cls('name')}
-            name="name"
-            type="text"
-            placeholder={variant === 'lead' ? 'Вашето име' : 'Име и фамилия'}
-            autoComplete="name"
-            value={form.data.name}
-            onChange={(e) => form.setData('name', e.target.value)}
-        />,
-        'Моля, въведете име.',
-    );
+        return typeof raw === 'string' || typeof raw === 'number' ? String(raw) : '';
+    };
 
-    const phoneField = field(
-        'phone',
-        'Телефон',
-        true,
-        <input
-            id={`phone-${source}`}
-            className={cls('phone')}
-            name="phone"
-            type="tel"
-            placeholder="+359 ..."
-            autoComplete="tel"
-            value={form.data.phone}
-            onChange={(e) => form.setData('phone', e.target.value)}
-        />,
-        'Моля, въведете валиден телефон.',
-    );
+    const set = (field: FormField, next: string | boolean) => {
+        if (field.builtin) {
+            form.setData(field.key, next as string);
+        } else {
+            form.setData('extra', { ...extra, [field.key]: next });
+        }
+    };
 
-    const emailField = field(
-        'email',
-        'Имейл',
-        variant === 'offer',
-        <input
-            id={`email-${source}`}
-            className={cls('email')}
-            name="email"
-            type="email"
-            placeholder="you@company.com"
-            autoComplete="email"
-            value={form.data.email}
-            onChange={(e) => form.setData('email', e.target.value)}
-        />,
-        variant === 'offer' ? 'Моля, въведете валиден имейл.' : 'Моля, проверете имейла.',
-    );
+    const control = (field: FormField): ReactNode => {
+        const id = `${field.key}-${source}`;
+        // The stylesheet reveals .errmsg through `.input.err ~ .errmsg`, so
+        // the error state has to sit on the input itself.
+        const className = errors[errorKey(field)] ? 'input err' : 'input';
+        const common = {
+            id,
+            className,
+            name: field.key,
+            placeholder: field.placeholder || undefined,
+            value: value(field),
+        };
+
+        if (field.type === 'textarea') {
+            return <textarea {...common} onChange={(e) => set(field, e.target.value)} />;
+        }
+
+        if (field.type === 'select') {
+            const options = field.key === 'frequency' ? FREQUENCIES : field.options.map((option) => ({ value: option, label: option }));
+
+            return (
+                <select {...common} onChange={(e) => set(field, e.target.value)}>
+                    <option value="">{field.placeholder || 'Изберете…'}</option>
+                    {options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                    {field.key === 'cargo_type' && <option value={OTHER}>Друго…</option>}
+                </select>
+            );
+        }
+
+        const list = field.key === 'origin' || field.key === 'destination' ? 'cities' : field.options.length > 0 ? `options-${id}` : undefined;
+
+        return (
+            <>
+                <input
+                    {...common}
+                    type={field.type}
+                    inputMode={field.type === 'number' ? 'numeric' : undefined}
+                    min={field.type === 'number' && field.builtin ? 1 : undefined}
+                    autoComplete={AUTOCOMPLETE[field.key] ?? 'off'}
+                    list={list}
+                    onChange={(e) => set(field, e.target.value)}
+                />
+                {list === `options-${id}` && (
+                    <datalist id={list}>
+                        {field.options.map((option) => (
+                            <option key={option} value={option} />
+                        ))}
+                    </datalist>
+                )}
+            </>
+        );
+    };
+
+    const renderField = (field: FormField): ReactNode => {
+        const id = `${field.key}-${source}`;
+        const error = errors[errorKey(field)];
+
+        if (field.type === 'checkbox') {
+            return (
+                <div className="field field-check" key={field.key}>
+                    <label htmlFor={id}>
+                        <input id={id} type="checkbox" checked={extra[field.key] === true} onChange={(e) => set(field, e.target.checked)} />{' '}
+                        {field.label} {field.required && <span className="req">*</span>}
+                    </label>
+                    {field.help && <p className="hint">{field.help}</p>}
+                    {error && (
+                        <div className="errmsg" style={{ display: 'block' }}>
+                            {error}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <div className="field" key={field.key}>
+                <label htmlFor={id}>
+                    {field.label} {field.required && <span className="req">*</span>}
+                </label>
+                {control(field)}
+                <div className="errmsg">{error ?? FALLBACK_ERRORS[field.key] ?? ''}</div>
+                {field.help && <p className="hint">{field.help}</p>}
+                {field.key === 'cargo_type' && value(field) === OTHER && (
+                    <input
+                        id={`cargo-other-${source}`}
+                        className="input"
+                        style={{ marginTop: 8 }}
+                        name="cargo_other"
+                        type="text"
+                        aria-label="Опишете товара"
+                        placeholder="Какъв е товарът?"
+                        value={String(form.data.cargo_other ?? '')}
+                        onChange={(e) => form.setData('cargo_other', e.target.value)}
+                    />
+                )}
+            </div>
+        );
+    };
+
+    /*
+     * Rows in the admin's order. "From" directly followed by "to" keeps the
+     * route line between them (.route-fields) — but only when both are on
+     * their own rows, which is how the design draws it.
+     */
+    const rows = layout(config.fields);
+    const body: ReactNode[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const next = rows[i + 1];
+
+        if (row.length === 1 && row[0].key === 'origin' && next?.length === 1 && next[0].key === 'destination') {
+            body.push(
+                <div className="route-fields" key="route">
+                    {renderField(row[0])}
+                    {renderField(next[0])}
+                </div>,
+            );
+            i++;
+            continue;
+        }
+
+        body.push(
+            row.length === 2 ? (
+                <div className="form-row" key={row[0].key}>
+                    {row.map(renderField)}
+                </div>
+            ) : (
+                renderField(row[0])
+            ),
+        );
+    }
+
+    const usesCities = config.fields.some((field) => field.key === 'origin' || field.key === 'destination');
 
     const honeypot = (
         <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', opacity: 0 }}>
@@ -211,10 +315,26 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
                 type="text"
                 tabIndex={-1}
                 autoComplete="off"
-                value={form.data.website}
+                value={String(form.data.website ?? '')}
                 onChange={(e) => form.setData('website', e.target.value)}
             />
         </div>
+    );
+
+    const buttonText = form.processing ? 'Изпраща се…' : config.button || DEFAULT_BUTTON[variant];
+
+    const fields = (
+        <>
+            {body}
+            {usesCities && (
+                <datalist id="cities">
+                    {CITIES.map((city) => (
+                        <option key={city} value={city} />
+                    ))}
+                </datalist>
+            )}
+            {honeypot}
+        </>
     );
 
     if (variant === 'lead') {
@@ -224,12 +344,9 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
                 <p className="sub">{settings.inquiry_subtitle?.trim() || DEFAULT_SUBTITLE}</p>
 
                 <form onSubmit={submit} noValidate>
-                    {nameField}
-                    {phoneField}
-                    {emailField}
-                    {honeypot}
+                    {fields}
                     <button className="btn btn-accent" style={{ width: '100%', marginTop: 4 }} type="submit" disabled={form.processing}>
-                        {form.processing ? 'Изпраща се…' : 'Свържете се с мен'}
+                        {buttonText}
                     </button>
                 </form>
             </div>
@@ -238,221 +355,10 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
 
     return (
         <form onSubmit={submit} noValidate>
-            <div className="form-row">
-                {nameField}
-                {phoneField}
-            </div>
-
-            {emailField}
-
-            <div className="route-fields">
-                {field(
-                    'origin',
-                    'Начална дестинация',
-                    false,
-                    <input
-                        id={`origin-${source}`}
-                        className={cls('origin')}
-                        name="origin"
-                        type="text"
-                        placeholder="Град / адрес на товарене"
-                        autoComplete="off"
-                        list="cities"
-                        value={form.data.origin}
-                        onChange={(e) => form.setData('origin', e.target.value)}
-                    />,
-                    '',
-                )}
-
-                {field(
-                    'destination',
-                    'Крайна дестинация',
-                    false,
-                    <input
-                        id={`destination-${source}`}
-                        className={cls('destination')}
-                        name="destination"
-                        type="text"
-                        placeholder="Град / адрес на доставка"
-                        autoComplete="off"
-                        list="cities"
-                        value={form.data.destination}
-                        onChange={(e) => form.setData('destination', e.target.value)}
-                    />,
-                    '',
-                )}
-            </div>
-
-            <datalist id="cities">
-                {CITIES.map((city) => (
-                    <option key={city} value={city} />
-                ))}
-            </datalist>
-
-            <div className="field">
-                <label htmlFor={`cargo-${source}`}>Тип товар</label>
-                <select
-                    id={`cargo-${source}`}
-                    className="input"
-                    name="cargo_type"
-                    value={form.data.cargo_type}
-                    onChange={(e) => form.setData('cargo_type', e.target.value)}
-                >
-                    <option value="">Изберете тип товар…</option>
-                    {CARGO_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                            {type}
-                        </option>
-                    ))}
-                    <option value={OTHER}>Друго…</option>
-                </select>
-            </div>
-
-            {form.data.cargo_type === OTHER && (
-                <div className="field">
-                    <label htmlFor={`cargo-other-${source}`}>Опишете товара</label>
-                    <input
-                        id={`cargo-other-${source}`}
-                        className="input"
-                        name="cargo_other"
-                        type="text"
-                        placeholder="Какъв е товарът?"
-                        value={form.data.cargo_other}
-                        onChange={(e) => form.setData('cargo_other', e.target.value)}
-                    />
-                </div>
-            )}
-
-            <div className="form-row">
-                {field(
-                    'cargo_quantity',
-                    'Брой',
-                    false,
-                    <input
-                        id={`cargo_quantity-${source}`}
-                        className={cls('cargo_quantity')}
-                        name="cargo_quantity"
-                        type="number"
-                        inputMode="numeric"
-                        min={1}
-                        step={1}
-                        placeholder="напр. 4"
-                        value={form.data.cargo_quantity}
-                        onChange={(e) => form.setData('cargo_quantity', e.target.value)}
-                    />,
-                    '',
-                )}
-
-                {field(
-                    'cargo_packaging',
-                    'Опаковка',
-                    false,
-                    <input
-                        id={`cargo_packaging-${source}`}
-                        className={cls('cargo_packaging')}
-                        name="cargo_packaging"
-                        type="text"
-                        placeholder="Палети, кашони…"
-                        autoComplete="off"
-                        list={`packaging-${source}`}
-                        value={form.data.cargo_packaging}
-                        onChange={(e) => form.setData('cargo_packaging', e.target.value)}
-                    />,
-                    '',
-                )}
-            </div>
-
-            <datalist id={`packaging-${source}`}>
-                {PACKAGING.map((item) => (
-                    <option key={item} value={item} />
-                ))}
-            </datalist>
-
-            <div className="form-row">
-                {field(
-                    'cargo_dimensions',
-                    'Размери (Д × Ш × В)',
-                    false,
-                    <input
-                        id={`cargo_dimensions-${source}`}
-                        className={cls('cargo_dimensions')}
-                        name="cargo_dimensions"
-                        type="text"
-                        placeholder="120 × 80 × 150 см"
-                        autoComplete="off"
-                        value={form.data.cargo_dimensions}
-                        onChange={(e) => form.setData('cargo_dimensions', e.target.value)}
-                    />,
-                    '',
-                )}
-
-                {field(
-                    'cargo_weight',
-                    'Общо тегло',
-                    false,
-                    <input
-                        id={`cargo_weight-${source}`}
-                        className={cls('cargo_weight')}
-                        name="cargo_weight"
-                        type="text"
-                        placeholder="напр. 1200 кг"
-                        autoComplete="off"
-                        value={form.data.cargo_weight}
-                        onChange={(e) => form.setData('cargo_weight', e.target.value)}
-                    />,
-                    '',
-                )}
-            </div>
-
-            <div className="form-row">
-                {field(
-                    'loading_date',
-                    'Дата на товарене',
-                    false,
-                    <input
-                        id={`loading_date-${source}`}
-                        className={cls('loading_date')}
-                        name="loading_date"
-                        type="date"
-                        value={form.data.loading_date}
-                        onChange={(e) => form.setData('loading_date', e.target.value)}
-                    />,
-                    '',
-                )}
-
-                <div className="field">
-                    <label htmlFor={`frequency-${source}`}>Транспортът е</label>
-                    <select
-                        id={`frequency-${source}`}
-                        className="input"
-                        name="frequency"
-                        value={form.data.frequency}
-                        onChange={(e) => form.setData('frequency', e.target.value)}
-                    >
-                        <option value="">Изберете…</option>
-                        <option value="one_time">Еднократен</option>
-                        <option value="regular">Редовен</option>
-                    </select>
-                </div>
-            </div>
-
-            <div className="field">
-                <label htmlFor={`message-${source}`}>Допълнителна информация</label>
-                <textarea
-                    id={`message-${source}`}
-                    className={cls('message')}
-                    name="message"
-                    placeholder="Специални изисквания, температурен режим, ADR…"
-                    value={form.data.message}
-                    onChange={(e) => form.setData('message', e.target.value)}
-                />
-                <p className="hint">По желание — колкото повече детайли, толкова по-точна оферта.</p>
-            </div>
-
-            {honeypot}
+            {fields}
 
             <button className="btn btn-accent btn-lg" style={{ width: '100%' }} type="submit" disabled={form.processing}>
-                {form.processing ? 'Изпраща се…' : 'Изпрати запитване'}
+                {buttonText}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
                 </svg>

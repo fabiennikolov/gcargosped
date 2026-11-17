@@ -68,6 +68,10 @@ class InquiryReceived extends Mailable
             'До' => $this->inquiry->destination,
             'Дата на товарене' => $this->inquiry->loading_date?->format('d.m.Y'),
             'Транспорт' => Inquiry::FREQUENCIES[$this->inquiry->frequency] ?? null,
+            ...collect($this->inquiry->extra ?? [])
+                ->mapWithKeys(fn ($answer) => [(string) ($answer['label'] ?? '') => (string) ($answer['value'] ?? '')])
+                ->except(['Име', 'Телефон', 'Имейл'])
+                ->all(),
             'Услуга' => $this->inquiry->service?->title,
             'Източник' => Inquiry::SOURCES[$this->inquiry->source] ?? $this->inquiry->source,
         ];

@@ -114,8 +114,28 @@ export interface NavService {
 }
 
 /** Props shared with every Inertia response by HandleInertiaRequests. */
+/** One field of a public inquiry form, as arranged in the admin (Форми). */
+export interface FormField {
+    /** Column name for a standard field, `x<id>` (posted inside `extra`) for the admin's own. */
+    key: string;
+    builtin: boolean;
+    type: 'text' | 'tel' | 'email' | 'textarea' | 'number' | 'date' | 'select' | 'checkbox';
+    label: string;
+    placeholder: string;
+    help: string;
+    required: boolean;
+    half: boolean;
+    options: string[];
+}
+
+export interface FormConfig {
+    fields: FormField[];
+    button: string | null;
+}
+
 export interface SharedSiteProps {
     settings: SiteSettings;
+    forms: { lead: FormConfig; offer: FormConfig };
     /** The address this page declares as its own — same value as <link rel="canonical">. */
     canonical?: string;
     nav: { mainServices: NavService[] };

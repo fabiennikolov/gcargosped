@@ -34,6 +34,7 @@ class Inquiry extends Model
     {
         return [
             'loading_date' => 'date',
+            'extra' => 'array',
         ];
     }
 
