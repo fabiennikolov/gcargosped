@@ -49,6 +49,17 @@ class InquiriesTable
                     ->label('До')
                     ->toggleable(),
 
+                TextColumn::make('loading_date')
+                    ->label('Товарене')
+                    ->date('d.m.Y')
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('frequency')
+                    ->label('Транспорт')
+                    ->formatStateUsing(fn (?string $state) => Inquiry::FREQUENCIES[$state] ?? $state)
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('status')
                     ->label('Статус')
                     ->badge()

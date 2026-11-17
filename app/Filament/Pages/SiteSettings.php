@@ -8,6 +8,7 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -37,7 +38,7 @@ class SiteSettings extends Page
 
     /** Every key this page owns; anything else in the table is left alone. */
     private const KEYS = [
-        'site_name', 'logo_path', 'hero_title', 'hero_subtitle', 'hero_cta', 'stats',
+        'site_name', 'logo_path', 'hero_title', 'hero_title_size', 'hero_subtitle', 'hero_cta', 'stats',
         'phone', 'phone_raw', 'email', 'address', 'working_hours', 'footer_tagline',
         'whatsapp_number', 'whatsapp_greeting', 'whatsapp_teaser', 'whatsapp_topics',
         'inquiry_title', 'inquiry_subtitle', 'inquiry_success',
@@ -269,6 +270,19 @@ class SiteSettings extends Page
                             ->rows(2)
                             ->columnSpanFull()
                             ->helperText('Позволен е HTML — <span class="hl">…</span> оцветява дума в зелено.'),
+
+                        Select::make('hero_title_size')
+                            ->label('Размер на главното заглавие')
+                            ->options([
+                                '70' => '70% — много по-малко',
+                                '80' => '80%',
+                                '90' => '90%',
+                                '100' => '100% — както е по дизайн',
+                                '110' => '110%',
+                                '120' => '120% — по-голямо',
+                            ])
+                            ->placeholder('100% — както е по дизайн')
+                            ->helperText('Важи и за компютър, и за телефон — заглавието се мащабира пропорционално.'),
 
                         Textarea::make('hero_subtitle')
                             ->label('Подзаглавие')

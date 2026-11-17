@@ -1,7 +1,7 @@
-import { Link } from '@inertiajs/react';
 import PostCard from '@/components/site/post-card';
 import SiteLayout from '@/layouts/site-layout';
 import type { PageMeta, PostCard as PostCardData, PostDetail } from '@/types/site';
+import { Link } from '@inertiajs/react';
 
 interface Props {
     post: PostDetail;
@@ -31,12 +31,8 @@ export default function BlogPost({ post, related, meta }: Props) {
 
             <section>
                 <div className="wrap service-body">
-                    <article className="glass service-rich">
-                        {post.body
-                            ?.split(/\n{2,}/)
-                            .filter(Boolean)
-                            .map((paragraph, index) => <p key={index}>{paragraph.trim()}</p>)}
-                    </article>
+                    {/* Sanitised on the server (App\Support\RichText) to the tags the admin editor can produce. */}
+                    <article className="glass service-rich" dangerouslySetInnerHTML={{ __html: post.body ?? '' }} />
                 </div>
             </section>
 

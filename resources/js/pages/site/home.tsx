@@ -69,6 +69,21 @@ function splitStat(value: string): [string, string] {
     return match ? [match[1].trim(), match[2].trim()] : [value, ''];
 }
 
+/**
+ * The admin's "Размер на главното заглавие", as a multiplier the stylesheet
+ * applies to the heading on every screen size. Anything outside the offered
+ * range is ignored so a hand-edited value cannot blow the hero apart.
+ */
+function heroTitleScale(raw?: string): CSSProperties | undefined {
+    const percent = Number(raw);
+
+    if (!Number.isFinite(percent) || percent < 50 || percent > 150 || percent === 100) {
+        return undefined;
+    }
+
+    return { '--hero-scale': percent / 100 } as CSSProperties;
+}
+
 const REGIONS = [
     { fx: 'BG', title: 'България', text: 'Вътрешен транспорт и дистрибуция до всяка точка в страната.' },
     { fx: 'EU', title: 'Европа', text: 'Редовни курсове до и от държавите в Европейския съюз — цели камиони и групаж.' },
@@ -114,7 +129,7 @@ export default function Home({ services, partners, meta }: Props) {
                                 <span className="dot" /> На линия за нови запитвания
                             </span>
 
-                            <h1 dangerouslySetInnerHTML={{ __html: settings.hero_title ?? '' }} />
+                            <h1 style={heroTitleScale(settings.hero_title_size)} dangerouslySetInnerHTML={{ __html: settings.hero_title ?? '' }} />
                             <p className="lead">{settings.hero_subtitle}</p>
 
                             <div className="hero-cta">

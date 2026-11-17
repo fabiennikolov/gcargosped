@@ -35,6 +35,7 @@ export interface PostCard {
 }
 
 export interface PostDetail extends Omit<PostCard, 'url'> {
+    /** Sanitised HTML. */
     body: string | null;
 }
 
@@ -57,6 +58,8 @@ export interface SiteSettings {
     /** logo_path resolved to a browser URL by HandleInertiaRequests. */
     logo_url?: string | null;
     hero_title?: string;
+    /** Percent of the designed size, e.g. "90". Empty = 100. */
+    hero_title_size?: string;
     hero_subtitle?: string;
     hero_cta?: string;
     /** JSON array of {value, label} rows for the dark band on the home page. */

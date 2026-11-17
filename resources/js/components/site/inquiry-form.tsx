@@ -1,8 +1,8 @@
+import { reportLead } from '@/lib/marketing';
+import type { SharedSiteProps } from '@/types/site';
 import { useForm, usePage } from '@inertiajs/react';
 import { useEffect, type FormEvent, type ReactNode } from 'react';
 import { CheckIcon } from './icons';
-import { reportLead } from '@/lib/marketing';
-import type { SharedSiteProps } from '@/types/site';
 
 interface Props {
     /** Which form this is, so the admin can tell offers from contact messages. */
@@ -29,15 +29,7 @@ const DEFAULT_TITLE = 'Изпрати запитване';
 const DEFAULT_SUBTITLE = 'Оставете данни и ще ви потърсим с оферта.';
 
 /** The cargo types the original select offered, in the same order. */
-const CARGO_TYPES = [
-    'Кола / Автомобил',
-    'Палет',
-    'Ремарке',
-    'Кашон / Каса',
-    'Машина / Оборудване',
-    'Групажен товар',
-    'Метали (гондола)',
-];
+const CARGO_TYPES = ['Кола / Автомобил', 'Палет', 'Ремарке', 'Кашон / Каса', 'Машина / Оборудване', 'Групажен товар', 'Метали (гондола)'];
 
 const CITIES = [
     'София',
@@ -54,6 +46,9 @@ const CITIES = [
     'Солун, Гърция',
 ];
 
+/** Suggestions for the packaging field; anything else can be typed. */
+const PACKAGING = ['Палети', 'Кашони', 'Каси', 'Бъчви', 'Чували', 'Биг бег', 'Рулони', 'Без опаковка'];
+
 const OTHER = 'other';
 
 export default function InquiryForm({ source, variant, serviceId }: Props) {
@@ -67,8 +62,14 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
         email: '',
         cargo_type: '',
         cargo_other: '',
+        cargo_quantity: '',
+        cargo_packaging: '',
+        cargo_dimensions: '',
+        cargo_weight: '',
         origin: '',
         destination: '',
+        loading_date: '',
+        frequency: '',
         message: '',
         source,
         service_id: serviceId ?? null,
@@ -126,7 +127,17 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
     const cls = (field: string) => (form.errors[field as keyof typeof form.errors] ? 'input err' : 'input');
 
     const field = (
-        name: 'name' | 'phone' | 'email' | 'origin' | 'destination',
+        name:
+            | 'name'
+            | 'phone'
+            | 'email'
+            | 'origin'
+            | 'destination'
+            | 'cargo_quantity'
+            | 'cargo_packaging'
+            | 'cargo_dimensions'
+            | 'cargo_weight'
+            | 'loading_date',
         label: string,
         required: boolean,
         input: ReactNode,
@@ -217,12 +228,7 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
                     {phoneField}
                     {emailField}
                     {honeypot}
-                    <button
-                        className="btn btn-accent"
-                        style={{ width: '100%', marginTop: 4 }}
-                        type="submit"
-                        disabled={form.processing}
-                    >
+                    <button className="btn btn-accent" style={{ width: '100%', marginTop: 4 }} type="submit" disabled={form.processing}>
                         {form.processing ? 'Изпраща се…' : 'Свържете се с мен'}
                     </button>
                 </form>
@@ -317,13 +323,126 @@ export default function InquiryForm({ source, variant, serviceId }: Props) {
                 </div>
             )}
 
+            <div className="form-row">
+                {field(
+                    'cargo_quantity',
+                    'Брой',
+                    false,
+                    <input
+                        id={`cargo_quantity-${source}`}
+                        className={cls('cargo_quantity')}
+                        name="cargo_quantity"
+                        type="number"
+                        inputMode="numeric"
+                        min={1}
+                        step={1}
+                        placeholder="напр. 4"
+                        value={form.data.cargo_quantity}
+                        onChange={(e) => form.setData('cargo_quantity', e.target.value)}
+                    />,
+                    '',
+                )}
+
+                {field(
+                    'cargo_packaging',
+                    'Опаковка',
+                    false,
+                    <input
+                        id={`cargo_packaging-${source}`}
+                        className={cls('cargo_packaging')}
+                        name="cargo_packaging"
+                        type="text"
+                        placeholder="Палети, кашони…"
+                        autoComplete="off"
+                        list={`packaging-${source}`}
+                        value={form.data.cargo_packaging}
+                        onChange={(e) => form.setData('cargo_packaging', e.target.value)}
+                    />,
+                    '',
+                )}
+            </div>
+
+            <datalist id={`packaging-${source}`}>
+                {PACKAGING.map((item) => (
+                    <option key={item} value={item} />
+                ))}
+            </datalist>
+
+            <div className="form-row">
+                {field(
+                    'cargo_dimensions',
+                    'Размери (Д × Ш × В)',
+                    false,
+                    <input
+                        id={`cargo_dimensions-${source}`}
+                        className={cls('cargo_dimensions')}
+                        name="cargo_dimensions"
+                        type="text"
+                        placeholder="120 × 80 × 150 см"
+                        autoComplete="off"
+                        value={form.data.cargo_dimensions}
+                        onChange={(e) => form.setData('cargo_dimensions', e.target.value)}
+                    />,
+                    '',
+                )}
+
+                {field(
+                    'cargo_weight',
+                    'Общо тегло',
+                    false,
+                    <input
+                        id={`cargo_weight-${source}`}
+                        className={cls('cargo_weight')}
+                        name="cargo_weight"
+                        type="text"
+                        placeholder="напр. 1200 кг"
+                        autoComplete="off"
+                        value={form.data.cargo_weight}
+                        onChange={(e) => form.setData('cargo_weight', e.target.value)}
+                    />,
+                    '',
+                )}
+            </div>
+
+            <div className="form-row">
+                {field(
+                    'loading_date',
+                    'Дата на товарене',
+                    false,
+                    <input
+                        id={`loading_date-${source}`}
+                        className={cls('loading_date')}
+                        name="loading_date"
+                        type="date"
+                        value={form.data.loading_date}
+                        onChange={(e) => form.setData('loading_date', e.target.value)}
+                    />,
+                    '',
+                )}
+
+                <div className="field">
+                    <label htmlFor={`frequency-${source}`}>Транспортът е</label>
+                    <select
+                        id={`frequency-${source}`}
+                        className="input"
+                        name="frequency"
+                        value={form.data.frequency}
+                        onChange={(e) => form.setData('frequency', e.target.value)}
+                    >
+                        <option value="">Изберете…</option>
+                        <option value="one_time">Еднократен</option>
+                        <option value="regular">Редовен</option>
+                    </select>
+                </div>
+            </div>
+
             <div className="field">
                 <label htmlFor={`message-${source}`}>Допълнителна информация</label>
                 <textarea
                     id={`message-${source}`}
                     className={cls('message')}
                     name="message"
-                    placeholder="Тегло, размери, дата на товарене, специални изисквания…"
+                    placeholder="Специални изисквания, температурен режим, ADR…"
                     value={form.data.message}
                     onChange={(e) => form.setData('message', e.target.value)}
                 />

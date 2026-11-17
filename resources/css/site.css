@@ -568,7 +568,8 @@ body {
     box-shadow: 0 0 0 4px rgba(27, 182, 115, 0.2);
 }
 .gcs .hero h1 {
-    font-size: var(--fs-display);
+    /* --hero-scale comes from the admin (Настройки → Размер на главното заглавие). */
+    font-size: calc(var(--fs-display) * var(--hero-scale, 1));
     letter-spacing: -0.035em;
     margin: 1rem 0 1.1rem;
 }
@@ -1820,6 +1821,50 @@ html.js .gcs .reveal.in {
     line-height: 1.75;
     max-width: 80ch;
 }
+.gcs .service-rich h3 {
+    font-size: 1.2rem;
+    margin: 1.3rem 0 0.5rem;
+    color: var(--ink);
+}
+.gcs .service-rich h3:first-child {
+    margin-top: 0;
+}
+.gcs .service-rich strong,
+.gcs .service-rich b {
+    color: var(--ink);
+    font-weight: 700;
+}
+.gcs .service-rich ul,
+.gcs .service-rich ol {
+    color: var(--ink-2);
+    margin: 0 0 1rem;
+    padding-left: 1.4rem;
+    font-size: 1.06rem;
+    line-height: 1.75;
+    max-width: 78ch;
+}
+.gcs .service-rich ul {
+    list-style: disc;
+}
+.gcs .service-rich ol {
+    list-style: decimal;
+}
+.gcs .service-rich li {
+    margin-bottom: 0.35rem;
+}
+.gcs .service-rich li > p {
+    margin-bottom: 0;
+}
+.gcs .service-rich a {
+    color: var(--brand);
+    text-decoration: underline;
+}
+.gcs .service-rich blockquote {
+    margin: 0 0 1rem;
+    padding: 0.2rem 0 0.2rem 1rem;
+    border-left: 3px solid var(--brand);
+    color: var(--ink-2);
+}
 .gcs .sv-others {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2226,7 +2271,7 @@ html.js .gcs .reveal.in {
         padding-bottom: 40px;
     }
     .gcs .hero h1 {
-        font-size: clamp(1.9rem, 8.4vw, 2.5rem);
+        font-size: calc(clamp(1.9rem, 8.4vw, 2.5rem) * var(--hero-scale, 1));
         margin: 0.7rem 0 0.65rem;
     }
     .gcs .hero .lead {

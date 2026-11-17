@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Posts\Schemas;
 use App\Support\ImageOptimizer;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -62,11 +63,18 @@ class PostForm
                             ->maxLength(500)
                             ->columnSpanFull(),
 
-                        Textarea::make('body')
+                        RichEditor::make('body')
                             ->label('Текст на публикацията')
-                            ->rows(16)
+                            ->toolbarButtons([
+                                ['h2', 'h3'],
+                                ['bold', 'italic', 'underline', 'link'],
+                                ['bulletList', 'orderedList', 'blockquote'],
+                                ['undo', 'redo'],
+                            ])
+                            ->fileAttachments(false)
+                            ->extraInputAttributes(['style' => 'min-height: 24rem'])
                             ->columnSpanFull()
-                            ->helperText('Празен ред разделя абзаците.'),
+                            ->helperText('H2 и H3 са подзаглавия, B е удебелен текст, бутоните със списъци правят точки или номерация. Текст, поставен от Word или друг сайт, губи чуждите шрифтове и цветове.'),
                     ]),
 
                 Section::make('Изображение')

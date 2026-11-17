@@ -24,6 +24,19 @@ class Inquiry extends Model
         'service' => 'Страница на услуга',
     ];
 
+    /** One-off or recurring — the office prices a regular line differently. */
+    public const FREQUENCIES = [
+        'one_time' => 'Еднократен',
+        'regular' => 'Редовен',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'loading_date' => 'date',
+        ];
+    }
+
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

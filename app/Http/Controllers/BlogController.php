@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PostCardResource;
 use App\Models\Post;
 use App\Models\Setting;
+use App\Support\RichText;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -37,7 +38,7 @@ class BlogController extends Controller
                 'slug' => $post->slug,
                 'title' => $post->title,
                 'excerpt' => $post->excerpt,
-                'body' => $post->body,
+                'body' => RichText::toHtml($post->body),
                 'coverImage' => $post->cover_image_url,
                 'category' => $post->category?->name,
                 'readMinutes' => $post->read_minutes,

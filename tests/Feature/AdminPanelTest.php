@@ -26,6 +26,7 @@ class AdminPanelTest extends TestCase
             'inquiries' => ['/admin/inquiries'],
             'partners' => ['/admin/partners'],
             'settings' => ['/admin/site-settings'],
+            'new post' => ['/admin/posts/create'],
         ];
     }
 
